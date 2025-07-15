@@ -1,2 +1,6 @@
 twitchio[starlette]
 python-dotenv
+websockets
+pymongo
+python-dotenv
+requests
