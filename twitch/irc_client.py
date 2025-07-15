@@ -16,7 +16,7 @@ class IRCClient:
             await websocket.send(f"PASS {TWITCH_TOKEN}")
             await websocket.send(f"NICK {TWITCH_USERNAME}")
             await websocket.send(f"JOIN #{TWITCH_CHANNEL}")
-            print(f"✅ Connected to #{TWITCH_CHANNEL} as {TWITCH_USERNAME}")
+            print(f" Connected to #{TWITCH_CHANNEL} as {TWITCH_USERNAME}")
 
             while True:
                 try:
@@ -33,7 +33,7 @@ class IRCClient:
                         await self.handle_message(parsed, websocket)
 
                 except websockets.exceptions.ConnectionClosed:
-                    print("🔌 Disconnected. Reconnecting...")
+                    print("Disconnected. Reconnecting...")
                     break
 
     async def handle_message(self, message, websocket):
@@ -41,7 +41,7 @@ class IRCClient:
 
         if msg_text.startswith("{"):
             prompt = msg_text.lstrip("{").rstrip("}").strip()
-            print(f"📩 Prompt from chat: {prompt}")
+            print(f"Prompt from chat: {prompt}")
 
             async def respond(reply):
                 reply = reply.strip()

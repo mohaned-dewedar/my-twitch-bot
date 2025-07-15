@@ -26,7 +26,7 @@ class OllamaManager:
         if not await self.is_ready():
             print("🧠 Ollama not ready, waiting...")
             if not await self.wait_until_ready():
-                print("❌ Ollama not ready after timeout.")
+                print("Ollama not ready after timeout.")
                 return None, "Ollama model is not available. Try again soon."
 
         try:
@@ -55,5 +55,5 @@ class OllamaManager:
         except Exception as e:
             import traceback
             traceback.print_exc()  # <-- Add this
-            print(f"❌ Exception during Ollama call: {e}")
+            print(f" Exception during Ollama call: {e}")
             return None, f"[LLM error] {e}"
