@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 
 class OllamaManager:
-    def __init__(self, model="llama3", host="http://localhost:11434"):
+    def __init__(self, model="tinydolphin", host="http://localhost:11434"):
         self.model = model
         self.host = host
 
@@ -32,16 +32,28 @@ class OllamaManager:
         try:
             async with aiohttp.ClientSession() as session:
                 print(f"📡 Asking Ollama: {prompt[:60]}...")
+                updated_prompt = (
+                    "You are CherryBott. You answer general questions, specialize in Smite2, and "
+                    "keep responses short, fun, and engaging. Do not ask follow-up questions."
+                )
+
                 async with session.post(
                     f"{self.host}/api/generate",
-                    json={"model": self.model, "prompt": prompt, "stream": False},
+                    json={
+                        "model": self.model,
+                        "prompt": prompt,         # User input only
+                        "system": updated_prompt, # System instructions
+                        "stream": False
+                    },
                     timeout=aiohttp.ClientTimeout(total=30)
                 ) as res:
                     res.raise_for_status()
                     data = await res.json()
                     return data["response"].strip(), None
 
+
         except Exception as e:
+            import traceback
+            traceback.print_exc()  # <-- Add this
             print(f"❌ Exception during Ollama call: {e}")
             return None, f"[LLM error] {e}"
-

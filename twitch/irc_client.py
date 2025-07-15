@@ -44,6 +44,11 @@ class IRCClient:
             print(f"📩 Prompt from chat: {prompt}")
 
             async def respond(reply):
+                reply = reply.strip()
+                max_len = 450  # Safe buffer
+                if len(reply) > max_len:
+                    reply = reply[:max_len - 3] + "..."  # Truncate with ellipsis
+
                 print(f"📤 Sending reply to Twitch: {reply[:60]}...")
                 await websocket.send(f"PRIVMSG #{TWITCH_CHANNEL} :{reply}")
 
