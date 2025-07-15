@@ -14,7 +14,7 @@ class OllamaWorkerQueue:
         await self.queue.put((prompt, respond))
 
     async def start(self):
-        print(OllamaWorkerQueue started.")
+        print("OllamaWorkerQueue started.")
         while True:
             prompt, respond = await self.queue.get()
             print(f"Dequeued prompt: {prompt[:60]}...")

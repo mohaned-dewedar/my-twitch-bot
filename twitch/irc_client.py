@@ -1,6 +1,6 @@
 import websockets
 import asyncio
-from config import TWITCH_USERNAME, TWITCH_TOKEN, TWITCH_CHANNEL
+from config import TWITCH_BOT_NAME, TWITCH_OAUTH_TOKEN, TWITCH_CHANNEL
 from twitch.message_parser import parse_privmsg
 from llm.ollama_worker import OllamaWorkerQueue
 
@@ -13,10 +13,10 @@ class IRCClient:
 
     async def connect(self):
         async with websockets.connect(self.uri) as websocket:
-            await websocket.send(f"PASS {TWITCH_TOKEN}")
-            await websocket.send(f"NICK {TWITCH_USERNAME}")
+            await websocket.send(f"PASS {TWITCH_OAUTH_TOKEN}")
+            await websocket.send(f"NICK {TWITCH_BOT_NAME}")
             await websocket.send(f"JOIN #{TWITCH_CHANNEL}")
-            print(f" Connected to #{TWITCH_CHANNEL} as {TWITCH_USERNAME}")
+            print(f" Connected to #{TWITCH_CHANNEL} as {TWITCH_BOT_NAME}")
 
             while True:
                 try:

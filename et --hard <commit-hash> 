@@ -1,7 +1,0 @@
-[33m3f2a542[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{0}: checkout: moving from master to master
-[33m3f2a542[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{1}: commit: working version
-[33meaa9a9c[m HEAD@{2}: commit (amend): Working version produced
-[33m36390e6[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{3}: commit: remoe test file
-[33m096b7e6[m HEAD@{4}: commit: checkpoint, This works. Need to decouple by servicing via a queue
-[33m632c5d3[m HEAD@{5}: commit: temp changes
-[33m98b9e7e[m HEAD@{6}: commit (initial): Initial Commit
