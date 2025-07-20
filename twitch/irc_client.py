@@ -3,6 +3,8 @@ import asyncio
 from config import TWITCH_BOT_NAME, TWITCH_OAUTH_TOKEN, TWITCH_CHANNEL
 from twitch.message_parser import parse_privmsg
 from llm.ollama_worker import OllamaWorkerQueue
+from data.data_loader import SmiteDataLoader
+from llm.trivia_handler import TriviaHandler
 
 class IRCClient:
     def __init__(self):
@@ -10,6 +12,16 @@ class IRCClient:
         self.buffer = []
         self.ollama_queue = OllamaWorkerQueue()
         asyncio.create_task(self.ollama_queue.start())
+        
+        # Initialize Smite data loader and trivia handler
+        self.data_loader = SmiteDataLoader()
+        self.trivia_handler = TriviaHandler(self.data_loader)
+        
+        # Load the data when the client starts
+        if not self.data_loader.load_data():
+            print("Warning: Failed to load Smite data. Trivia functionality will not work.")
+        else:
+            print("✅ Smite data loaded successfully!")
 
     async def connect(self):
         async with websockets.connect(self.uri) as websocket:
@@ -38,7 +50,15 @@ class IRCClient:
 
     async def handle_message(self, message, websocket):
         msg_text = message["message"]
+        username = message.get("username", "Unknown")
 
+        # Check for trivia commands first
+        trivia_response = self.trivia_handler.handle_message(msg_text, username)
+        if trivia_response:
+            await self.send_message(websocket, trivia_response)
+            return
+
+        # Handle other commands (existing LLM functionality)
         if msg_text.startswith("{"):
             prompt = msg_text.lstrip("{").rstrip("}").strip()
             print(f"Prompt from chat: {prompt}")
@@ -53,3 +73,13 @@ class IRCClient:
                 await websocket.send(f"PRIVMSG #{TWITCH_CHANNEL} :{reply}")
 
             await self.ollama_queue.enqueue(prompt, respond)
+    
+    async def send_message(self, websocket, message):
+        """Helper method to send messages to Twitch chat."""
+        message = message.strip()
+        max_len = 450  # Safe buffer
+        if len(message) > max_len:
+            message = message[:max_len - 3] + "..."  # Truncate with ellipsis
+
+        print(f"📤 Sending trivia reply to Twitch: {message[:60]}...")
+        await websocket.send(f"PRIVMSG #{TWITCH_CHANNEL} :{message}")

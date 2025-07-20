@@ -1,0 +1,838 @@
+{
+  "scraped_at": "2025-07-17T10:12:57.976045",
+  "total_gods": 64,
+  "gods": [
+    {
+      "name": "Achilles",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Achilles%28S2%29_Default_Icon.png/96px-T_Achilles%28S2%29_Default_Icon.png?a8640",
+      "profile_url": "https://wiki.smite2.com/w/Achilles",
+      "index": 1,
+      "abilities": [
+        "Shield of Achilles",
+        "Radiant Glory",
+        "Combat Dodge",
+        "Fatal Strike",
+        "Glorious Charge"
+      ]
+    },
+    {
+      "name": "Agni",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Agni%28S2%29_Default_Icon.png/96px-T_Agni%28S2%29_Default_Icon.png?c114e",
+      "profile_url": "https://wiki.smite2.com/w/Agni",
+      "index": 2,
+      "abilities": [
+        "Path of Flames",
+        "Noxious Fumes",
+        "Flame Wave",
+        "Rain Fire",
+        "Combustion"
+      ]
+    },
+    {
+      "name": "Aladdin",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Aladdin%28S2%29_Default_Icon.png/96px-T_Aladdin%28S2%29_Default_Icon.png?90e18",
+      "profile_url": "https://wiki.smite2.com/w/Aladdin",
+      "index": 3,
+      "abilities": [
+        "Street Rat",
+        "Wish Upon a Star",
+        "Street Smart",
+        "Arabian Nights",
+        "Three Wishes"
+      ]
+    },
+    {
+      "name": "Amaterasu",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Amaterasu%28S2%29_Default_Icon.png/96px-T_Amaterasu%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Amaterasu",
+      "index": 4,
+      "abilities": [
+        "Divine Presence",
+        "Heavenly Reflection",
+        "Dazzling Offensive",
+        "Glowing Strike",
+        "Divine Light"
+      ]
+    },
+    {
+      "name": "Anhur",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Anhur%28S2%29_Default_Icon.png/96px-T_Anhur%28S2%29_Default_Icon.png?85022",
+      "profile_url": "https://wiki.smite2.com/w/Anhur",
+      "index": 5,
+      "abilities": [
+        "Enfeeble",
+        "Impale",
+        "Disperse",
+        "Desert Fury",
+        "Shifting Sands"
+      ]
+    },
+    {
+      "name": "Anubis",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Anubis%28S2%29_Default_Icon.png/96px-T_Anubis%28S2%29_Default_Icon.png?275dd",
+      "profile_url": "https://wiki.smite2.com/w/Anubis",
+      "index": 6,
+      "abilities": [
+        "Death Gaze",
+        "Plague of Locusts",
+        "Mummify",
+        "Grasping Hands",
+        "Death Gaze"
+      ]
+    },
+    {
+      "name": "Aphrodite",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Aphrodite%28S2%29_Default_Icon.png/96px-T_Aphrodite%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Aphrodite",
+      "index": 7,
+      "abilities": [
+        "Love Birds",
+        "Back Off!",
+        "Kiss",
+        "Undying Love",
+        "Dove"
+      ]
+    },
+    {
+      "name": "Apollo",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Apollo%28S2%29_Default_Icon.png/96px-T_Apollo%28S2%29_Default_Icon.png?c95f2",
+      "profile_url": "https://wiki.smite2.com/w/Apollo",
+      "index": 8,
+      "abilities": [
+        "So Beautiful",
+        "Audacity",
+        "The Moves",
+        "Across the Sky",
+        "Serenade"
+      ]
+    },
+    {
+      "name": "Ares",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Ares%28S2%29_Default_Icon.png/96px-T_Ares%28S2%29_Default_Icon.png?ac0fe",
+      "profile_url": "https://wiki.smite2.com/w/Ares",
+      "index": 9,
+      "abilities": [
+        "Shackles",
+        "Bolster Defenses",
+        "Searing Flesh",
+        "No Escape",
+        "War Banner"
+      ]
+    },
+    {
+      "name": "Artemis",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Artemis%28S2%29_Default_Icon.png/96px-T_Artemis%28S2%29_Default_Icon.png?8669a",
+      "profile_url": "https://wiki.smite2.com/w/Artemis",
+      "index": 10,
+      "abilities": [
+        "Transgressor's Fate",
+        "Vengeful Assault",
+        "Suppress the Insolent",
+        "Calydonian Boar",
+        "Tusky"
+      ]
+    },
+    {
+      "name": "Athena",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Athena%28S2%29_Default_Icon.png/96px-T_Athena%28S2%29_Default_Icon.png?a156c",
+      "profile_url": "https://wiki.smite2.com/w/Athena",
+      "index": 11,
+      "abilities": [
+        "Reach",
+        "Confound",
+        "Defender of Olympus",
+        "Shield Wall",
+        "Preemptive Strike"
+      ]
+    },
+    {
+      "name": "Awilix",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Awilix%28S2%29_Default_Icon.png/96px-T_Awilix%28S2%29_Default_Icon.png?3141c",
+      "profile_url": "https://wiki.smite2.com/w/Awilix",
+      "index": 12,
+      "abilities": [
+        "Feather Step",
+        "Summon Suku",
+        "Moonlight Charge",
+        "Gravity Surge",
+        "Suku"
+      ]
+    },
+    {
+      "name": "Bacchus",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Bacchus%28S2%29_Default_Icon.png/96px-T_Bacchus%28S2%29_Default_Icon.png?3baa6",
+      "profile_url": "https://wiki.smite2.com/w/Bacchus",
+      "index": 13,
+      "abilities": [
+        "Chug",
+        "Belly Flop",
+        "Bacchanalia",
+        "Intoxicate",
+        "Wine"
+      ]
+    },
+    {
+      "name": "Baron Samedi",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Baron_Samedi%28S2%29_Default_Icon.png/96px-T_Baron_Samedi%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Baron_Samedi",
+      "index": 14,
+      "abilities": [
+        "Hysteria",
+        "Vivid Gaze",
+        "Consign Spirits",
+        "Life of the Party",
+        "Voodoo"
+      ]
+    },
+    {
+      "name": "Bellona",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Bellona%28S2%29_Default_Icon.png/96px-T_Bellona%28S2%29_Default_Icon.png?8a6f7",
+      "profile_url": "https://wiki.smite2.com/w/Bellona",
+      "index": 15,
+      "abilities": [
+        "Shield Bash",
+        "Bludgeon",
+        "Eagle's Rally",
+        "Scourge",
+        "War Banner"
+      ]
+    },
+    {
+      "name": "Cabrakan",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Cabrakan%28S2%29_Default_Icon.png/96px-T_Cabrakan%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Cabrakan",
+      "index": 16,
+      "abilities": [
+        "Seismic Crush",
+        "Tremors",
+        "Refraction Shield",
+        "Tectonic Rift",
+        "Earthquake"
+      ]
+    },
+    {
+      "name": "Cerberus",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Cerberus%28S2%29_Default_Icon.png/96px-T_Cerberus%28S2%29_Default_Icon.png?e04b1",
+      "profile_url": "https://wiki.smite2.com/w/Cerberus",
+      "index": 17,
+      "abilities": [
+        "Paralyzing Spit",
+        "Soul Expulsion",
+        "Stimulate",
+        "Ghastly Breath",
+        "Soul"
+      ]
+    },
+    {
+      "name": "Cernunnos",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Cernunnos%28S2%29_Default_Icon.png/96px-T_Cernunnos%28S2%29_Default_Icon.png?6f390",
+      "profile_url": "https://wiki.smite2.com/w/Cernunnos",
+      "index": 18,
+      "abilities": [
+        "Bramble Blast",
+        "Horn Charge",
+        "Lacerate",
+        "The Wild Hunt",
+        "Bramble"
+      ]
+    },
+    {
+      "name": "Chaac",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Chaac%28S2%29_Default_Icon.png/96px-T_Chaac%28S2%29_Default_Icon.png?7b8c5",
+      "profile_url": "https://wiki.smite2.com/w/Chaac",
+      "index": 19,
+      "abilities": [
+        "Thunder Strike",
+        "Rain Dance",
+        "Torrent",
+        "Storm Call",
+        "Rain"
+      ]
+    },
+    {
+      "name": "Cupid",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Cupid%28S2%29_Default_Icon.png/96px-T_Cupid%28S2%29_Default_Icon.png?2c510",
+      "profile_url": "https://wiki.smite2.com/w/Cupid",
+      "index": 20,
+      "abilities": [
+        "Heart Bomb",
+        "Share the Love",
+        "Flutter",
+        "Fields of Love",
+        "Heart"
+      ]
+    },
+    {
+      "name": "Danzaburou",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Danzaburou%28S2%29_Default_Icon.png/96px-T_Danzaburou%28S2%29_Default_Icon.png?b3a4d",
+      "profile_url": "https://wiki.smite2.com/w/Danzaburou",
+      "index": 21,
+      "abilities": [
+        "Tanuki Trickery",
+        "Raccoon Fireworks",
+        "Tanuki Dash",
+        "Tanuki Time",
+        "Tanuki"
+      ]
+    },
+    {
+      "name": "Fenrir",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Fenrir%28S2%29_Default_Icon.png/96px-T_Fenrir%28S2%29_Default_Icon.png?66794",
+      "profile_url": "https://wiki.smite2.com/w/Fenrir",
+      "index": 22,
+      "abilities": [
+        "Unchained",
+        "Seething Howl",
+        "Brutalize",
+        "Ragnarok",
+        "Rage"
+      ]
+    },
+    {
+      "name": "Ganesha",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Ganesha_Default_Icon.png/96px-T_Ganesha_Default_Icon.png?512d5",
+      "profile_url": "https://wiki.smite2.com/w/Ganesha",
+      "index": 23,
+      "abilities": [
+        "Remove Obstacles",
+        "Turn of Fate",
+        "Dharmic Pillars",
+        "Lotus Crown",
+        "Dharma"
+      ]
+    },
+    {
+      "name": "Geb",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Geb%28S2%29_Default_Icon.png/96px-T_Geb%28S2%29_Default_Icon.png?b3a4d",
+      "profile_url": "https://wiki.smite2.com/w/Geb",
+      "index": 24,
+      "abilities": [
+        "Roll Out",
+        "Shock Wave",
+        "Stone Shield",
+        "Cataclysm",
+        "Stone"
+      ]
+    },
+    {
+      "name": "Guan Yu",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Guan_Yu%28S2%29_Default_Icon.png/96px-T_Guan_Yu%28S2%29_Default_Icon.png?bc648",
+      "profile_url": "https://wiki.smite2.com/w/Guan_Yu",
+      "index": 25,
+      "abilities": [
+        "Warrior's Will",
+        "Painless",
+        "Cavalry Charge",
+        "Taoist Assault",
+        "War Banner"
+      ]
+    },
+    {
+      "name": "Hades",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Hades%28S2%29_Default_Icon.png/96px-T_Hades%28S2%29_Default_Icon.png?056c7",
+      "profile_url": "https://wiki.smite2.com/w/Hades",
+      "index": 26,
+      "abilities": [
+        "Death from Below",
+        "Shroud of Darkness",
+        "Devour Souls",
+        "Pillar of Agony",
+        "Soul"
+      ]
+    },
+    {
+      "name": "Hecate",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Hecate%28S2%29_Default_Icon.png/96px-T_Hecate%28S2%29_Default_Icon.png?7efca",
+      "profile_url": "https://wiki.smite2.com/w/Hecate",
+      "index": 27,
+      "abilities": [
+        "Crossroads",
+        "Night Crawler",
+        "Witchcraft",
+        "Hecate's Wheel",
+        "Magic"
+      ]
+    },
+    {
+      "name": "Hercules",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Hercules%28S2%29_Default_Icon.png/96px-T_Hercules%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Hercules",
+      "index": 28,
+      "abilities": [
+        "Driving Strike",
+        "Earthbreaker",
+        "Mitigate Wounds",
+        "Excavate",
+        "Strength"
+      ]
+    },
+    {
+      "name": "Hou Yi",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_HouYi_Default_Icon.png/96px-T_HouYi_Default_Icon.png?2765c",
+      "profile_url": "https://wiki.smite2.com/w/Hou_Yi",
+      "index": 29,
+      "abilities": [
+        "Ricochet",
+        "Mark of the Golden Crow",
+        "Divebomb",
+        "Sunbreaker",
+        "Arrow"
+      ]
+    },
+    {
+      "name": "Hua Mulan",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Hua_Mulan%28S2%29_Default_Icon.png/96px-T_Hua_Mulan%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Hua_Mulan",
+      "index": 30,
+      "abilities": [
+        "Grapple",
+        "Cross Strike",
+        "Deflect Arrows",
+        "Bladed Arrow",
+        "Sword"
+      ]
+    },
+    {
+      "name": "Hun Batz",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Hun_Batz%28S2%29_Default_Icon.png/96px-T_Hun_Batz%28S2%29_Default_Icon.png?3f007",
+      "profile_url": "https://wiki.smite2.com/w/Hun_Batz",
+      "index": 31,
+      "abilities": [
+        "Savage Bite",
+        "Overhand Smash",
+        "Sacred Monkey",
+        "Fear No Evil",
+        "Monkey"
+      ]
+    },
+    {
+      "name": "Izanami",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Izanami%28S2%29_Default_Icon.png/96px-T_Izanami%28S2%29_Default_Icon.png?b3a4d",
+      "profile_url": "https://wiki.smite2.com/w/Izanami",
+      "index": 32,
+      "abilities": [
+        "Sickle Storm",
+        "Silent Wind",
+        "Fade Away",
+        "Dark Portal",
+        "Sickle"
+      ]
+    },
+    {
+      "name": "Janus",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Janus_Default_Icon.png/96px-T_Janus_Default_Icon.png?1685a",
+      "profile_url": "https://wiki.smite2.com/w/Janus",
+      "index": 33,
+      "abilities": [
+        "Portal",
+        "Unstable Vortex",
+        "Threshold",
+        "Through Space and Time",
+        "Portal"
+      ]
+    },
+    {
+      "name": "Jing Wei",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_JingWei%28S2%29_Default_Icon.png/96px-T_JingWei%28S2%29_Default_Icon.png?8d169",
+      "profile_url": "https://wiki.smite2.com/w/Jing_Wei",
+      "index": 34,
+      "abilities": [
+        "Persistent Gust",
+        "Explosive Bolts",
+        "Agility",
+        "Air Strike",
+        "Wind"
+      ]
+    },
+    {
+      "name": "Kali",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Kali%28S2%29_Default_Icon.png/96px-T_Kali%28S2%29_Default_Icon.png?70288",
+      "profile_url": "https://wiki.smite2.com/w/Kali",
+      "index": 35,
+      "abilities": [
+        "Death Lash",
+        "Incite",
+        "Leap",
+        "Nimble Strike",
+        "Blade"
+      ]
+    },
+    {
+      "name": "Khepri",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Khepri%28S2%29_Default_Icon.png/96px-T_Khepri%28S2%29_Default_Icon.png?b3a4d",
+      "profile_url": "https://wiki.smite2.com/w/Khepri",
+      "index": 36,
+      "abilities": [
+        "Abduct",
+        "Rising Dawn",
+        "Solar Flare",
+        "Scarab's Blessing",
+        "Sun"
+      ]
+    },
+    {
+      "name": "Kukulkan",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Kukulkan%28S2%29_Default_Icon.png/96px-T_Kukulkan%28S2%29_Default_Icon.png?d4251",
+      "profile_url": "https://wiki.smite2.com/w/Kukulkan",
+      "index": 37,
+      "abilities": [
+        "Zephyr",
+        "Whirlwind",
+        "Slipstream",
+        "Spirit of the Nine Winds",
+        "Wind"
+      ]
+    },
+    {
+      "name": "Loki",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Loki%28S2%29_Default_Icon.png/96px-T_Loki%28S2%29_Default_Icon.png?a44d0",
+      "profile_url": "https://wiki.smite2.com/w/Loki",
+      "index": 38,
+      "abilities": [
+        "Vanish",
+        "Decoy",
+        "Aimed Strike",
+        "Assassinate",
+        "Dagger"
+      ]
+    },
+    {
+      "name": "Medusa",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Medusa%28S2%29_Default_Icon.png/96px-T_Medusa%28S2%29_Default_Icon.png?b3a4d",
+      "profile_url": "https://wiki.smite2.com/w/Medusa",
+      "index": 39,
+      "abilities": [
+        "Acid Spray",
+        "Lacerate",
+        "Viper Shot",
+        "Petrify",
+        "Venom"
+      ]
+    },
+    {
+      "name": "Mercury",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Mercury_Default_Icon.png/96px-T_Mercury_Default_Icon.png?cbce8",
+      "profile_url": "https://wiki.smite2.com/w/Mercury",
+      "index": 40,
+      "abilities": [
+        "Made You Look",
+        "Maximum Velocity",
+        "Special Delivery",
+        "Sonic Boom",
+        "Speed"
+      ]
+    },
+    {
+      "name": "Merlin",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Merlin%28S2%29_Default_Icon.png/96px-T_Merlin%28S2%29_Default_Icon.png?2013a",
+      "profile_url": "https://wiki.smite2.com/w/Merlin",
+      "index": 41,
+      "abilities": [
+        "Arcane Mastery",
+        "Ice Storm",
+        "Fire Shard",
+        "Dragon's Call",
+        "Magic"
+      ]
+    },
+    {
+      "name": "Mordred",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Mordred%28S2%29_Default_Icon.png/96px-T_Mordred%28S2%29_Default_Icon.png?cfb59",
+      "profile_url": "https://wiki.smite2.com/w/Mordred",
+      "index": 42,
+      "abilities": [
+        "Shadow Strike",
+        "Dark Presence",
+        "Void Blade",
+        "Abyssal Storm",
+        "Shadow"
+      ]
+    },
+    {
+      "name": "Neith",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Neith%28S2%29_Default_Icon.png/96px-T_Neith%28S2%29_Default_Icon.png?73218",
+      "profile_url": "https://wiki.smite2.com/w/Neith",
+      "index": 43,
+      "abilities": [
+        "Spirit Arrow",
+        "Unravel",
+        "Backflip",
+        "World Weaver",
+        "Arrow"
+      ]
+    },
+    {
+      "name": "Nemesis",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Nemesis%28S2%29_Default_Icon.png/96px-T_Nemesis%28S2%29_Default_Icon.png?b3a4d",
+      "profile_url": "https://wiki.smite2.com/w/Nemesis",
+      "index": 44,
+      "abilities": [
+        "Swift Vengeance",
+        "Slice and Dice",
+        "Retribution",
+        "Divine Judgement",
+        "Blade"
+      ]
+    },
+    {
+      "name": "Nu Wa",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Nu_Wa%28S2%29_Default_Icon.png/96px-T_Nu_Wa%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Nu_Wa",
+      "index": 45,
+      "abilities": [
+        "Fog",
+        "Clay Soldiers",
+        "Shining Metal",
+        "Fire Shards",
+        "Clay"
+      ]
+    },
+    {
+      "name": "Odin",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Odin%28S2%29_Default_Icon.png/96px-T_Odin%28S2%29_Default_Icon.png?2ee32",
+      "profile_url": "https://wiki.smite2.com/w/Odin",
+      "index": 46,
+      "abilities": [
+        "Lunge",
+        "Shout",
+        "Raven Shout",
+        "Ring of Spears",
+        "Spear"
+      ]
+    },
+    {
+      "name": "Pele",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Pele%28S2%29_Default_Icon.png/96px-T_Pele%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Pele",
+      "index": 47,
+      "abilities": [
+        "Volcanic Lightning",
+        "Eruption",
+        "Magma Surge",
+        "Volcanic Lightning",
+        "Fire"
+      ]
+    },
+    {
+      "name": "Poseidon",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Poseidon%28S2%29_Default_Icon.png/96px-T_Poseidon%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Poseidon",
+      "index": 48,
+      "abilities": [
+        "Tidal Surge",
+        "Trident",
+        "Whirlpool",
+        "Release the Kraken",
+        "Water"
+      ]
+    },
+    {
+      "name": "Princess Bari",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Princess_Bari%28S2%29_Default_Icon.png/96px-T_Princess_Bari%28S2%29_Default_Icon.png?1a2f0",
+      "profile_url": "https://wiki.smite2.com/w/Princess_Bari",
+      "index": 49,
+      "abilities": [
+        "Flower Petals",
+        "Spirit Walk",
+        "Life Bloom",
+        "Reincarnation",
+        "Flower"
+      ]
+    },
+    {
+      "name": "Ra",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Ra%28S2%29_Default_Icon.png/96px-T_Ra%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Ra",
+      "index": 50,
+      "abilities": [
+        "Celestial Beam",
+        "Divine Light",
+        "Solar Blessing",
+        "Searing Pain",
+        "Sun"
+      ]
+    },
+    {
+      "name": "Rama",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Rama%28S2%29_Default_Icon.png/96px-T_Rama%28S2%29_Default_Icon.png?a8743",
+      "profile_url": "https://wiki.smite2.com/w/Rama",
+      "index": 51,
+      "abilities": [
+        "Astral Strike",
+        "Pick Me Up",
+        "Rolling Assault",
+        "Astral Barrage",
+        "Arrow"
+      ]
+    },
+    {
+      "name": "Scylla",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Scylla_Default_Icon.png/96px-T_Scylla_Default_Icon.png?43b80",
+      "profile_url": "https://wiki.smite2.com/w/Scylla",
+      "index": 52,
+      "abilities": [
+        "Sic 'Em",
+        "Crush",
+        "Sentinel",
+        "I'm a Monster",
+        "Tentacle"
+      ]
+    },
+    {
+      "name": "Sobek",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Sobek%28S2%29_Default_Icon.png/96px-T_Sobek%28S2%29_Default_Icon.png?b3a4d",
+      "profile_url": "https://wiki.smite2.com/w/Sobek",
+      "index": 53,
+      "abilities": [
+        "Charge Prey",
+        "Tail Whip",
+        "Sickening Strike",
+        "Lurking in the Waters",
+        "Water"
+      ]
+    },
+    {
+      "name": "Sol",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Sol%28S2%29_Default_Icon.png/96px-T_Sol%28S2%29_Default_Icon.png?e37a0",
+      "profile_url": "https://wiki.smite2.com/w/Sol",
+      "index": 54,
+      "abilities": [
+        "Radiance",
+        "Stellar Burst",
+        "Disapparate",
+        "Supernova",
+        "Fire"
+      ]
+    },
+    {
+      "name": "Sun Wukong",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_SunWukong_Default_Icon.png/96px-T_SunWukong_Default_Icon.png?303e7",
+      "profile_url": "https://wiki.smite2.com/w/Sun_Wukong",
+      "index": 55,
+      "abilities": [
+        "The Magic Cudgel",
+        "Master's Will",
+        "72 Transformations",
+        "Somersault Cloud",
+        "Staff"
+      ]
+    },
+    {
+      "name": "Susano",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Susano%28S2%29_Default_Icon.png/96px-T_Susano%28S2%29_Default_Icon.png?24b0a",
+      "profile_url": "https://wiki.smite2.com/w/Susano",
+      "index": 56,
+      "abilities": [
+        "Storm Kata",
+        "Wind Siphon",
+        "Jet Stream",
+        "Typhoon",
+        "Wind"
+      ]
+    },
+    {
+      "name": "Thanatos",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Thanatos%28S2%29_Default_Icon.png/96px-T_Thanatos%28S2%29_Default_Icon.png?bb1ee",
+      "profile_url": "https://wiki.smite2.com/w/Thanatos",
+      "index": 57,
+      "abilities": [
+        "Death Scythe",
+        "Soul Reap",
+        "Hovering Death",
+        "Harbinger of Death",
+        "Scythe"
+      ]
+    },
+    {
+      "name": "The Morrigan",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_The_Morrigan%28S2%29_Default_Icon.png/96px-T_The_Morrigan%28S2%29_Default_Icon.png?188e1",
+      "profile_url": "https://wiki.smite2.com/w/The_Morrigan",
+      "index": 58,
+      "abilities": [
+        "Deadly Aspects",
+        "Dark Omen",
+        "Confusion",
+        "Changeling",
+        "Magic"
+      ]
+    },
+    {
+      "name": "Thor",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Thor%28S2%29_Default_Icon.png/96px-T_Thor%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Thor",
+      "index": 59,
+      "abilities": [
+        "Mjolnir's Attunement",
+        "Tectonic Rift",
+        "Berserker Barrage",
+        "Anvil of Dawn",
+        "Hammer"
+      ]
+    },
+    {
+      "name": "Ullr",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Ullr%28S2%29_Default_Icon.png/96px-T_Ullr%28S2%29_Default_Icon.png?a1516",
+      "profile_url": "https://wiki.smite2.com/w/Ullr",
+      "index": 60,
+      "abilities": [
+        "Thrown Axe",
+        "Bladed Arrow",
+        "Hail of Arrows",
+        "Wield Axes",
+        "Axe"
+      ]
+    },
+    {
+      "name": "Vulcan",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Vulcan%28S2%29_Default_Icon.png/96px-T_Vulcan%28S2%29_Default_Icon.png?68221",
+      "profile_url": "https://wiki.smite2.com/w/Vulcan",
+      "index": 61,
+      "abilities": [
+        "Backfire",
+        "Inferno Cannon",
+        "Earthshaker",
+        "Volcanic Lightning",
+        "Fire"
+      ]
+    },
+    {
+      "name": "Yemoja",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Yemoja%28S2%29_Default_Icon.png/96px-T_Yemoja%28S2%29_Default_Icon.png?b3a4d",
+      "profile_url": "https://wiki.smite2.com/w/Yemoja",
+      "index": 62,
+      "abilities": [
+        "River's Blessing",
+        "Mending Waters",
+        "Riptide",
+        "Queen's Wrath",
+        "Water"
+      ]
+    },
+    {
+      "name": "Ymir",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Ymir%28S2%29_Default_Icon.png/96px-T_Ymir%28S2%29_Default_Icon.png?fc417",
+      "profile_url": "https://wiki.smite2.com/w/Ymir",
+      "index": 63,
+      "abilities": [
+        "Ice Wall",
+        "Frost Breath",
+        "Glacial Strike",
+        "Shards of Ice",
+        "Ice"
+      ]
+    },
+    {
+      "name": "Zeus",
+      "image_url": "https://wiki.smite2.com/images/thumb/T_Zeus%28S2%29_Default_Icon.png/96px-T_Zeus%28S2%29_Default_Icon.png?d376a",
+      "profile_url": "https://wiki.smite2.com/w/Zeus",
+      "index": 64,
+      "abilities": [
+        "Chain Lightning",
+        "Aegis Assault",
+        "Detonate Charge",
+        "Lightning Storm",
+        "Lightning"
+      ]
+    }
+  ]
+} 
