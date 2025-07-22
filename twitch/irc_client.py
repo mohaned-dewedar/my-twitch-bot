@@ -21,7 +21,7 @@ class IRCClient:
         if not self.data_loader.load_data():
             print("Warning: Failed to load Smite data. Trivia functionality will not work.")
         else:
-            print("✅ Smite data loaded successfully!")
+            print("Smite data loaded successfully!")
 
     async def connect(self):
         async with websockets.connect(self.uri) as websocket:
@@ -49,8 +49,10 @@ class IRCClient:
                     break
 
     async def handle_message(self, message, websocket):
+        
+        
         msg_text = message["message"]
-        username = message.get("username", "Unknown")
+        username = message.get("user", "Unknown")
 
         # Check for trivia commands first
         trivia_response = self.trivia_handler.handle_message(msg_text, username)
