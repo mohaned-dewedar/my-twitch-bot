@@ -4,6 +4,7 @@ from data.data_loader import SmiteDataLoader
 
 
 class TriviaHandler:
+
     def __init__(self, data_loader: SmiteDataLoader):
         """
         Initialize the trivia handler with a data loader.
@@ -109,6 +110,78 @@ class TriviaHandler:
             str: Help message
         """
         return """🎯 SMITE TRIVIA COMMANDS:
-• {trivia-ability} - Start a new trivia game
-• {trivia-god name} - Answer the current trivia
-• Type the exact god name to answer!""" 
+            • {trivia-ability} - Start a new trivia game
+            • {trivia-god name} - Answer the current trivia
+            • Type the exact god name to answer!""" 
+
+
+import requests
+import random
+from html import unescape
+
+
+
+class GeneralTriviaCache:
+    def __init__(self):
+        self.multiple_choice_questions = []
+        self.true_false_questions = []
+        self.url = "https://opentdb.com/api.php?"
+
+    def fetch_questions(self, amount=20, qtype="multiple"):
+        """
+        Fetch and store trivia questions from OpenTDB.
+        """
+        new_url = f"{self.url}amount={amount}&type={qtype}"
+        response = requests.get(new_url)
+        if response.status_code == 200:
+            results = response.json().get("results", [])
+            for item in results:
+                question_data = {
+                    "question": unescape(item["question"]),
+                    "correct_answer": unescape(item["correct_answer"]),
+                    "incorrect_answers": [unescape(ans) for ans in item["incorrect_answers"]],
+                    "category": item["category"],
+                    "difficulty": item["difficulty"],
+                }
+
+                if qtype == "multiple":
+                    question_data["all_answers"] = random.sample(
+                        question_data["incorrect_answers"] + [question_data["correct_answer"]], 4
+                    )
+                    self.multiple_choice_questions.append(question_data)
+                else:
+                    self.true_false_questions.append(question_data)
+
+    def get_multiple_choice(self, category: str = None) -> dict:
+        """
+        Return a multiple choice question, optionally filtered by category.
+        """
+        if len(self.multiple_choice_questions) < 5:
+            self.fetch_questions(qtype="multiple")
+
+        filtered = [q for q in self.multiple_choice_questions if not category or q["category"].lower() == category.lower()]
+        return random.choice(filtered) if filtered else random.choice(self.multiple_choice_questions)
+
+    def get_true_false(self, category: str = None) -> dict:
+        if len(self.true_false_questions) < 5:
+            self.fetch_questions(qtype="boolean")
+
+        if not self.true_false_questions:
+            raise RuntimeError("No True/False questions available. Check API connection.")
+
+        filtered = [q for q in self.true_false_questions if not category or q["category"].lower() == category.lower()]
+        return random.choice(filtered) if filtered else random.choice(self.true_false_questions)
+
+
+if __name__ == "__main__":
+    # Example usage of the GeneralTriviaCache
+    trivia_cache = GeneralTriviaCache()
+    
+
+    # Get a random multiple choice question
+    q1 = trivia_cache.get_multiple_choice()
+    print(q1)
+
+    # Get a True/False question from 'Science & Nature'
+    q2 = trivia_cache.get_true_false(category="Science & Nature")
+    print(q2)
