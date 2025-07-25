@@ -1,6 +1,7 @@
 import json
 import random
 from typing import Dict, List, Optional, Tuple
+from difflib import get_close_matches
 
 class SmiteDataLoader:
     def __init__(self, data_file_path: str = "data/smite_gods_extended.json"):
@@ -17,7 +18,13 @@ class SmiteDataLoader:
         self.current_trivia = None
         self.trivia_active = False
         self.correct_answer = None
-        
+    def check_smite_answer(self, user_answer: str, username: str) -> str:
+        is_correct, correct = self.data_loader.check_trivia_answer(user_answer)
+        if is_correct:
+            self.data_loader.end_trivia()
+            return f"🎉 @{username} got it right! The answer was: {correct}"
+        else:
+            return f"❌ @{username} - That’s not correct. Try again!"
     def load_data(self) -> bool:
         """
         Load the smite gods data from the JSON file and build the ability-to-god mapping.
@@ -125,6 +132,18 @@ class SmiteDataLoader:
         is_correct = user_answer.lower().strip() == self.correct_answer.lower().strip()
         return is_correct, self.correct_answer
     
+    def start_smite_trivia(self) -> Optional[dict]:
+        """
+        Start a new smite trivia question.
+        Returns the question dict or None if failed.
+        """
+        if self.data_loader.is_trivia_active():
+            return self.data_loader.get_current_question()
+        
+        ability = self.data_loader.start_trivia()
+        if ability:
+            return self.data_loader.get_current_question()
+        return None
     def end_trivia(self):
         """End the current trivia game."""
         self.trivia_active = False
@@ -139,7 +158,37 @@ class SmiteDataLoader:
             str: Current trivia ability or None if no active trivia
         """
         return self.current_trivia
-    
+    def get_current_question(self) -> Optional[dict]:
+        """
+        Return a structured trivia question if one is active.
+        """
+        if self.trivia_active and self.current_trivia and self.correct_answer:
+            return {
+                "question": f"Which god has the ability: {self.current_trivia}?",
+                "correct_answer": self.correct_answer,
+                "ability": self.current_trivia,
+                "category": "Smite"
+            }
+        return None  
+    def fuzzy_match_god(self, user_input: str) -> Optional[str]:
+        """
+        Try to fuzzy match user input to known god names.
+        
+        Returns:
+            str: Matched god name or None if not found
+        """
+        user_input = user_input.lower().strip()
+        all_gods = self.get_all_gods()
+
+        # Case-insensitive close match
+        matches = get_close_matches(user_input, [g.lower() for g in all_gods], n=1, cutoff=0.7)
+        if matches:
+            # Get original cased name
+            for god in all_gods:
+                if god.lower() == matches[0]:
+                    return god
+        return None
+
     def is_trivia_active(self) -> bool:
         """
         Check if a trivia game is currently active.

@@ -33,8 +33,27 @@ def load_trivia_categories() -> list:
 
     return categories
 
+
+def save_trivia_categories_json(json_path="data/trivia_categories.json"):
+    """
+    Fetch and save trivia categories as a JSON file with name and ID.
+    """
+    response = requests.get(CATEGORY_URL)
+    if response.status_code != 200:
+        raise RuntimeError("Failed to fetch categories from OpenTDB")
+    data = response.json()
+    categories = data.get("trivia_categories", [])
+    os.makedirs(os.path.dirname(json_path), exist_ok=True)
+    with open(json_path, "w") as f:
+        json.dump(categories, f, indent=2)
+    return categories
+
+
 if __name__ == "__main__":
     cats = load_trivia_categories()
     print("Available Trivia Categories:")
     for c in cats:
         print("-", c)
+    # Save as JSON with IDs
+    save_trivia_categories_json()
+    print("Saved categories as JSON with IDs.")

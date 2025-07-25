@@ -56,6 +56,6 @@ class OllamaManager:
 
         except Exception as e:
             import traceback
-            traceback.print_exc()  # <-- Add this
+            traceback.print_exc()  
             print(f" Exception during Ollama call: {e}")
             return None, f"[LLM error] {e}"
