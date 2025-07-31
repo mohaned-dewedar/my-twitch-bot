@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple
 from difflib import get_close_matches
 
 class SmiteDataLoader:
-    def __init__(self, data_file_path: str = "data/smite_gods_extended.json"):
+    def __init__(self, data_file_path: str = "data/smite_gods_modified.json"):
         """
         Initialize the Smite data loader with the path to the JSON file.
         
