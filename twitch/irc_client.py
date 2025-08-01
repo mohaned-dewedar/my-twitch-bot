@@ -3,33 +3,12 @@ import asyncio
 from config import TWITCH_BOT_NAME, TWITCH_OAUTH_TOKEN, TWITCH_CHANNEL
 from twitch.message_parser import parse_privmsg
 from llm.ollama_worker import OllamaWorkerQueue
-from data.data_loader import SmiteDataLoader
-from llm.trivia_handler import TriviaHandler, GeneralTriviaCache
+from data.data_loader import SmiteDataLoader 
+from trivia.types import ApiTriviaHandler, SmiteTriviaHandler
+from trivia.manager import TriviaManager
 from typing import Optional
 
 
-class TriviaSession:
-    def __init__(self):
-        self.active = False
-        self.question = None
-        self.correct_answer = None
-        self.answers = []
-        self.category = None
-        self.qtype = None  # 'multiple', 'boolean', or 'smite'
-
-    def start(self, q: dict, qtype: str):
-        self.active = True
-        self.qtype = qtype
-        self.question = q.get("question")
-        self.correct_answer = q.get("correct_answer")
-        self.answers = q.get("all_answers", [])
-        self.category = q.get("category", "General")
-
-    def end(self):
-        self.__init__()  # Clean reset
-
-    def is_active(self):
-        return self.active
 
 
 
@@ -39,11 +18,11 @@ class IRCClient:
         self.buffer = []
         self.ollama_queue = OllamaWorkerQueue()
         asyncio.create_task(self.ollama_queue.start())
-
-        self.session = TriviaSession()
         self.data_loader = SmiteDataLoader()
-        self.trivia_handler = TriviaHandler(self.data_loader)
-        self.general_cache = GeneralTriviaCache()
+        self.data_loader.load_data()
+        self.manager = TriviaManager()
+        self.smite_handler = SmiteTriviaHandler(self.data_loader)
+        self.api_handler = ApiTriviaHandler(use_custom=True)
 
         if not self.data_loader.load_data():
             print("Warning: Failed to load Smite data. Trivia functionality will not work.")
@@ -82,29 +61,6 @@ class IRCClient:
         if response:
             await self.send_message(websocket, response)
 
-    def check_answer(self, guess: str, username: str) -> str:
-   
-        if self.session.qtype == "smite":
-            match = self.trivia_handler.data_loader.fuzzy_match_god(guess)
-            if match and match.lower() == self.session.correct_answer.lower():
-                msg = f"🎉 @{username} got it right! The answer was: {self.session.correct_answer}"
-                self.session.end()
-            else:
-                msg = f"❌ @{username}, that's not correct. Try again!"
-            return msg
-
-        else:
-            
-            correct = self.session.correct_answer.strip().lower()
-            given = guess.strip().lower()
-
-            if given == correct or given in correct:
-                response = f"🎉 @{username} got it right! The answer was: {self.session.correct_answer}"
-                self.session.end()
-            else:
-                response = f"❌ @{username}, that's not correct. Try again!"
-            return response
-
     def format_multiple_choice_question(self, q: dict) -> str:
         answers = q.get("all_answers", [])
         formatted = "\n".join(f"{chr(65+i)}. {ans}" for i, ans in enumerate(answers))
@@ -114,47 +70,23 @@ class IRCClient:
         msg = message.lower()
 
         if msg.startswith("!trivia-help"):
-            return self.trivia_handler.get_help_message()
+            return self.manager.get_help()
 
         elif msg.startswith("!answer"):
-            if not self.session.is_active():
-                return "❌ No active trivia. Start one with !trivia"
             guess = message[len("!answer"):].strip()
-            return self.check_answer(guess, username)
-
-        elif msg.startswith("!trivia category"):
-            parts = message.split(maxsplit=2)
-            if len(parts) < 3:
-                return "⚠️ Please specify a category after !trivia category."
-            category = parts[2].strip()
-            q = self.general_cache.get_multiple_choice(category=category)
-            self.session.start(q, "multiple")
-            return self.format_multiple_choice_question(q)
+            return self.manager.submit_answer(guess, username)
 
         elif msg.startswith("!trivia smite"):
-            if self.session.is_active():
-                return "⚠️ A trivia session is already active. Use !answer to respond."
-
-            q = self.trivia_handler.get_smite_trivia_question()
-            if not q:
-                return "⚠️ Could not start a Smite trivia round."
-
-            self.session.start(q, "smite")
-            return f"🎯 TRIVIA TIME! {q['question']} Type !answer [god name] to guess!"
+            return self.manager.start_trivia(self.smite_handler)
 
         elif msg.startswith("!trivia"):
-            if self.session.is_active():
-                return "⚠️ There's already an active trivia question. Use !answer [your guess]"
-            q = self.general_cache.get_multiple_choice()
-            self.session.start(q, "multiple")
-            return self.format_multiple_choice_question(q)
+            return self.manager.start_trivia(self.api_handler)
 
         return None
 
     async def send_message(self, websocket, message: str):
-        message = message.strip()
         max_len = 450
         if len(message) > max_len:
             message = message[:max_len - 3] + "..."
         print(f"📤 Sending: {message[:60]}...")
-        await websocket.send(f"PRIVMSG #{TWITCH_CHANNEL} :{message}")
+        await websocket.send(f"PRIVMSG #{TWITCH_CHANNEL} :{message.strip()}")
