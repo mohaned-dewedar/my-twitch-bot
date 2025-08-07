@@ -3,7 +3,7 @@ import asyncio
 from config import TWITCH_BOT_NAME, TWITCH_OAUTH_TOKEN, TWITCH_CHANNEL
 from twitch.message_parser import parse_privmsg
 from llm.ollama_worker import OllamaWorkerQueue
-from data.data_loader import SmiteDataLoader 
+from data.data_loader import SmiteDataStore 
 from trivia.types import ApiTriviaHandler, SmiteTriviaHandler
 from trivia.manager import TriviaManager
 from typing import Optional
@@ -18,16 +18,19 @@ class IRCClient:
         self.buffer = []
         self.ollama_queue = OllamaWorkerQueue()
         asyncio.create_task(self.ollama_queue.start())
-        self.data_loader = SmiteDataLoader()
-        self.data_loader.load_data()
-        self.manager = TriviaManager()
-        self.smite_handler = SmiteTriviaHandler(self.data_loader)
+        
+        
         self.api_handler = ApiTriviaHandler(use_custom=True)
 
-        if not self.data_loader.load_data():
-            print("Warning: Failed to load Smite data. Trivia functionality will not work.")
+        self.smite_store = SmiteDataStore()
+        if not self.smite_store.load_data():
+            print("⚠️ Warning: Failed to load Smite data.")
         else:
-            print("Smite data loaded successfully!")
+            print("✅ Smite data loaded successfully!")
+
+        # Initialize trivia components
+        self.manager = TriviaManager()
+        self.smite_handler = SmiteTriviaHandler(self.smite_store)  
 
     async def connect(self):
         async with websockets.connect(self.uri) as websocket:
@@ -67,10 +70,13 @@ class IRCClient:
         return f"🎲 {q['question']}\n{formatted} (Category: {q['category']})"
 
     def handle_trivia_command(self, message: str, username: str) -> Optional[str]:
-        msg = message.lower()
+        msg = message.lower().strip()
 
         if msg.startswith("!trivia-help"):
             return self.manager.get_help()
+
+        elif msg.startswith("!giveup") :
+            return self.manager.end_trivia()
 
         elif msg.startswith("!answer"):
             guess = message[len("!answer"):].strip()
@@ -83,6 +89,7 @@ class IRCClient:
             return self.manager.start_trivia(self.api_handler)
 
         return None
+
 
     async def send_message(self, websocket, message: str):
         max_len = 450

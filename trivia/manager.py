@@ -1,6 +1,9 @@
 from trivia.base import TriviaBase
 from typing import Optional
 
+from typing import Optional
+from trivia.base import TriviaBase
+
 class TriviaManager:
     def __init__(self):
         self.active_handler: Optional[TriviaBase] = None
@@ -35,6 +38,7 @@ class TriviaManager:
         if self.active_handler:
             return self.active_handler.get_help()
         return "No active trivia handler. Try starting a new round using a trivia source."
+
         
 if __name__ == "__main__":
     # Setup
