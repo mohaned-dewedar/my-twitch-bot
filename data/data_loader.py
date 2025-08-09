@@ -193,42 +193,53 @@ class OpenTDBClient:
         return None
 
     def fetch(self, amount=10, qtype="multiple", category=None) -> List[Dict]:
-        elapsed = time.time() - self.last_request_time
-        if elapsed < self.min_interval:
-            time.sleep(self.min_interval - elapsed)
+            elapsed = time.time() - self.last_request_time
+            if elapsed < self.min_interval:
+                time.sleep(self.min_interval - elapsed)
 
-        self.last_request_time = time.time()
-        params = {
-            "amount": amount,
-            "type": qtype,
-            "token": self.token
-        }
+            self.last_request_time = time.time()
+            params = {
+                "amount": amount,
+                "type": qtype,
+                "token": self.token,
+                "difficulty": "easy"  # Always use easy difficulty
+            }
 
-        cat_id = self.get_category_id(category)
-        if cat_id:
-            params["category"] = cat_id
+            cat_id = self.get_category_id(category)
+            if cat_id:
+                params["category"] = cat_id
 
-        try:
-            res = requests.get(self.BASE_URL, params=params, timeout=10)
-            data = res.json()
-        except Exception as e:
-            print(f"[ERROR] Fetch failed: {e}")
-            return []
+            try:
+                res = requests.get(self.BASE_URL, params=params, timeout=10)
+                data = res.json()
+            except Exception as e:
+                print(f"[ERROR] Fetch failed: {e}")
+                return []
 
-        code = data.get("response_code")
-        if code == 4:
-            print("[INFO] Token exhausted. Resetting...")
-            self.token = self._get_token()
-            return self.fetch(amount, qtype, category)
-        elif code == 5:
-            print("[WARN] Rate limit hit. Retrying...")
-            time.sleep(5)
-            return self.fetch(amount, qtype, category)
-        elif code != 0:
-            print(f"[ERROR] Unexpected response code: {code}")
-            return []
+            code = data.get("response_code")
+            if code == 4:
+                print("[INFO] Token exhausted. Resetting...")
+                self.token = self._get_token()
+                return self.fetch(amount, qtype, category)
+            elif code == 5:
+                print("[WARN] Rate limit hit. Retrying...")
+                time.sleep(5)
+                return self.fetch(amount, qtype, category)
+            elif code != 0:
+                print(f"[ERROR] Unexpected response code: {code}")
+                return []
 
-        return [self._parse_question(item) for item in data.get("results", [])]
+            # Ensure each question has 'correct_answer' and 'incorrect_answers' keys
+            questions = []
+            for item in data.get("results", []):
+                q = self._parse_question(item)
+                # Guarantee keys
+                if "correct_answer" not in q and "answer" in q:
+                    q["correct_answer"] = q["answer"]
+                if "incorrect_answers" not in q:
+                    q["incorrect_answers"] = item.get("incorrect_answers", [])
+                questions.append(q)
+            return questions
 
     def _parse_question(self, item: dict) -> dict:
         correct = unescape(item["correct_answer"])

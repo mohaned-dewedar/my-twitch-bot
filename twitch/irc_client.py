@@ -20,7 +20,7 @@ class IRCClient:
         asyncio.create_task(self.ollama_queue.start())
         
         
-        self.api_handler = ApiTriviaHandler(use_custom=True)
+        self.api_handler = ApiTriviaHandler(use_custom=False)
 
         self.smite_store = SmiteDataStore()
         if not self.smite_store.load_data():
@@ -66,8 +66,9 @@ class IRCClient:
 
     def format_multiple_choice_question(self, q: dict) -> str:
         answers = q.get("all_answers", [])
-        formatted = "\n".join(f"{chr(65+i)}. {ans}" for i, ans in enumerate(answers))
-        return f"🎲 {q['question']}\n{formatted} (Category: {q['category']})"
+        # Use emojis and readable formatting for Twitch chat (no \n)
+        formatted = " ".join([f"{chr(0x1F1E6+i)} {ans}" for i, ans in enumerate(answers)])  # 🇦 🇧 🇨 ...
+        return f"🎲 {q['question']} | {formatted} | Category: {q.get('category', 'Unknown')}"
 
     def handle_trivia_command(self, message: str, username: str) -> Optional[str]:
         msg = message.lower().strip()
@@ -75,7 +76,7 @@ class IRCClient:
         if msg.startswith("!trivia-help"):
             return self.manager.get_help()
 
-        elif msg.startswith("!giveup") :
+        elif msg.startswith("!giveup"):
             return self.manager.end_trivia()
 
         elif msg.startswith("!answer"):
@@ -83,10 +84,17 @@ class IRCClient:
             return self.manager.submit_answer(guess, username)
 
         elif msg.startswith("!trivia smite"):
+            # Smite trivia already uses formatted output
             return self.manager.start_trivia(self.smite_handler)
 
         elif msg.startswith("!trivia"):
-            return self.manager.start_trivia(self.api_handler)
+            # API trivia: format question with options for chat
+            result = self.manager.start_trivia(self.api_handler)
+            # Try to get the current question and format if possible
+            q = self.api_handler.get_question() if hasattr(self.api_handler, 'get_question') else None
+            if q and q.get("all_answers"):
+                return self.format_multiple_choice_question(q)
+            return result
 
         return None
 
