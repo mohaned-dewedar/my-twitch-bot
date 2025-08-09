@@ -97,6 +97,24 @@ Example: {who is baron samedi}
 
 * Sends the response back to Twitch chat
 
+## 🎲 Trivia Functionality in Chat
+
+CherryBott supports interactive trivia games directly in Twitch chat! Users can play general trivia or Smite-specific trivia using simple commands:
+
+### Commands
+- `!trivia` — Start a general trivia question (multiple choice, easy difficulty)
+- `!trivia smite` — Start a Smite gods trivia question
+- `!answer <your answer>` — Submit your answer to the current trivia question
+- `!giveup` — End the current trivia round and reveal the answer
+- `!trivia-help` — Show help for trivia commands
+
+### How Trivia Appears in Chat
+- Questions are sent with all answer options, clearly formatted with emojis for readability (e.g., 🇦 Option1 🇧 Option2 ...)
+- Smite trivia asks you to name the god for a given ability
+- General trivia uses easy questions from OpenTDB or custom questions
+
+Enjoy competing with your chat and see who knows the most!
+
 ### 🧪 WIP / Future Tooling
 
 Planned features to enhance CherryBott's intelligence and usability:
