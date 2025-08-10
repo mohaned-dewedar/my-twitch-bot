@@ -30,12 +30,20 @@ For example:
 - `{trivia-Thor}`
 - `{trivia-Hercules}`
 
-### Example Game Flow
+## New Functionality: Auto Trivia Mode
 
-1. Viewer types: `{trivia-ability}`
-2. Bot responds: `🎯 TRIVIA TIME! Which god has the ability: Lightning Storm? Type {trivia-god name} to answer!`
-3. Viewer types: `{trivia-Zeus}`
-4. Bot responds: `🎉 @ViewerName got it correct! Zeus is the right answer!`
+You can now run trivia games continuously in chat! When a user types:
+- `!trivia auto` — The bot will keep asking general trivia questions one after another until someone ends the session.
+- `!trivia auto smite` — The bot will keep asking Smite trivia questions until ended.
+
+To stop auto trivia mode, type:
+- `!end trivia` — This will end the current auto trivia session.
+
+### How Auto Mode Works
+- The bot automatically asks a new question as soon as the previous one is answered correctly.
+- All answer options are shown in chat, formatted with emojis for readability (e.g., 🇦 Option1 🇧 Option2 ...).
+- Works for both general and Smite trivia.
+- You can still use single-round commands (`!trivia`, `!trivia smite`) for one-off questions.
 
 ## Data Structure
 
@@ -69,11 +77,16 @@ python3 test_trivia.py
 
 ## Commands Summary
 
-| Command | Description |
-|---------|-------------|
-| `{trivia-ability}` | Start a new trivia game |
-| `{trivia-god name}` | Answer the current trivia |
-| `{any other text}` | Pass to LLM for general chat |
+| Command                | Description                                 |
+|------------------------|---------------------------------------------|
+| `!trivia`              | Start a general trivia question             |
+| `!trivia smite`        | Start a Smite trivia question               |
+| `!trivia auto`         | Start continuous general trivia             |
+| `!trivia auto smite`   | Start continuous Smite trivia               |
+| `!answer <your answer>`| Submit your answer to the current question  |
+| `!giveup`              | End the current trivia round and reveal answer |
+| `!end trivia`          | End auto trivia mode                        |
+| `!trivia-help`         | Show help for trivia commands               |
 
 ## Technical Details
 
@@ -89,4 +102,4 @@ Potential improvements could include:
 - Multiple difficulty levels
 - Ability to ask about specific gods
 - Cooldown periods between trivia games
-- Leaderboards 
+- Leaderboards

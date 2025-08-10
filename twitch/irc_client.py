@@ -32,6 +32,9 @@ class IRCClient:
         self.manager = TriviaManager()
         self.smite_handler = SmiteTriviaHandler(self.smite_store)  
 
+        self.auto_trivia = False
+        self.auto_trivia_type = None  # "api" or "smite"
+
     async def connect(self):
         async with websockets.connect(self.uri) as websocket:
             await websocket.send(f"PASS {TWITCH_OAUTH_TOKEN}")
@@ -64,6 +67,18 @@ class IRCClient:
         if response:
             await self.send_message(websocket, response)
 
+        # Auto trivia: if active and a correct answer was given, ask next question
+        if self.auto_trivia and self.manager.should_ask_next():
+            await asyncio.sleep(1)  # Small delay for readability
+            if self.auto_trivia_type == "smite":
+                result = self.manager.start_trivia(self.smite_handler, force=True)
+                await self.send_message(websocket, result)
+            else:
+                self.manager.start_trivia(self.api_handler, force=True)
+                q = self.api_handler.get_question() if hasattr(self.api_handler, 'get_question') else None
+                if q and q.get("all_answers"):
+                    await self.send_message(websocket, self.format_multiple_choice_question(q))
+
     def format_multiple_choice_question(self, q: dict) -> str:
         answers = q.get("all_answers", [])
         # Use emojis and readable formatting for Twitch chat (no \n)
@@ -77,20 +92,44 @@ class IRCClient:
             return self.manager.get_help()
 
         elif msg.startswith("!giveup"):
+            self.auto_trivia = False
+            self.auto_trivia_type = None
             return self.manager.end_trivia()
+
+        elif msg.startswith("!end trivia"):
+            self.auto_trivia = False
+            self.auto_trivia_type = None
+            return "🛑 Auto trivia ended!"
 
         elif msg.startswith("!answer"):
             guess = message[len("!answer"):].strip()
-            return self.manager.submit_answer(guess, username)
+            result = self.manager.submit_answer(guess, username)
+            return result
+
+        elif msg.startswith("!trivia auto smite"):
+            self.auto_trivia = True
+            self.auto_trivia_type = "smite"
+            result = self.manager.start_trivia(self.smite_handler, force=True)
+            return result
+
+        elif msg.startswith("!trivia auto"):
+            self.auto_trivia = True
+            self.auto_trivia_type = "api"
+            self.manager.start_trivia(self.api_handler, force=True)
+            q = self.api_handler.get_question() if hasattr(self.api_handler, 'get_question') else None
+            if q and q.get("all_answers"):
+                return self.format_multiple_choice_question(q)
+            return "Auto trivia started!"
 
         elif msg.startswith("!trivia smite"):
-            # Smite trivia already uses formatted output
+            self.auto_trivia = False
+            self.auto_trivia_type = None
             return self.manager.start_trivia(self.smite_handler)
 
         elif msg.startswith("!trivia"):
-            # API trivia: format question with options for chat
+            self.auto_trivia = False
+            self.auto_trivia_type = None
             result = self.manager.start_trivia(self.api_handler)
-            # Try to get the current question and format if possible
             q = self.api_handler.get_question() if hasattr(self.api_handler, 'get_question') else None
             if q and q.get("all_answers"):
                 return self.format_multiple_choice_question(q)
