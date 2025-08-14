@@ -3,3 +3,5 @@ websockets
 python-dotenv
 requests
 ollama
+alembic
+psycopg2-binary

@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16.2
+    container_name: trivia_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: trivia
+      POSTGRES_PASSWORD: trivia-password
+      POSTGRES_DB: trivia
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  pgdata:
