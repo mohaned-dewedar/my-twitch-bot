@@ -1,0 +1,29 @@
+[project]
+name = "cherrybott"
+version = "0.1.0"
+description = "A Twitch chatbot powered by local LLMs that specializes in Smite2 knowledge and interactive trivia games"
+readme = "ReadMe.MD"
+requires-python = ">=3.9"
+dependencies = [
+    "python-dotenv",
+    "websockets",
+    "requests", 
+    "ollama",
+    "alembic",
+    "psycopg2-binary",
+    "asyncpg",
+    "aiohttp",
+    "sqlalchemy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]

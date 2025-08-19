@@ -32,16 +32,16 @@
 git clone https://github.com/mohaned-dewedar/my-twitch-bot
 cd my-twitch-bot
 ```
-### 2. Create a Virtual Environment
+### 2. Install uv (if not already installed)
 
 ```bash
-python3 -m venv _venv
-source _venv/bin/activate
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 ### 3. Install Dependencies
 ```bash
-pip install -r requirements.txt
+# This will automatically create a virtual environment and install dependencies
+uv sync
 ```
 
 ### 4. Start Ollama Server
@@ -82,7 +82,7 @@ Copy the Authentication token at User Access Token : {token}
 
 ### 6. Run the Bot
 ```bash
-python chat_listener.py
+uv run python chat_listener.py
 ```
 
 ### How it works:
