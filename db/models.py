@@ -9,6 +9,7 @@ channels = Table(
     "channels",
     metadata,
     Column("id", Integer, primary_key=True),
+    Column("twitch_channel_id", String(255), nullable=False, unique=True),
     Column("name", String(255), nullable=False),
     Column("description", Text),
     Column("created_at", TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")),
@@ -62,7 +63,23 @@ attempts = Table(
     Column("id", Integer, primary_key=True),
     Column("session_id", Integer, ForeignKey("sessions.id", ondelete="CASCADE")),
     Column("question_id", Integer, ForeignKey("questions.id", ondelete="CASCADE")),
+    Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE")),
+    Column("channel_id", Integer, ForeignKey("channels.id", ondelete="CASCADE")),
     Column("user_answer", Text),
     Column("is_correct", Boolean, server_default="false"),
     Column("created_at", TIMESTAMP, server_default=func.now()),
+)
+
+channel_users = Table(
+    "channel_users",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("channel_id", Integer, ForeignKey("channels.id", ondelete="CASCADE")),
+    Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE")),
+    Column("first_seen", TIMESTAMP, server_default=func.now()),
+    Column("last_seen", TIMESTAMP, server_default=func.now()),
+    Column("total_questions", Integer, server_default="0"),
+    Column("correct_answers", Integer, server_default="0"),
+    Column("streak", Integer, server_default="0"),
+    Column("best_streak", Integer, server_default="0"),
 )

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Callable, Dict, Optional
 import websockets
 from websockets import WebSocketClientProtocol
+import aiohttp
 from config import TWITCH_BOT_NAME, TWITCH_OAUTH_TOKEN, TWITCH_CHANNEL
 from twitch.message_parser import parse_privmsg
 from llm.ollama_worker import OllamaWorkerQueue
@@ -40,6 +41,38 @@ class TwitchSettings:
 
 def clamp_chat(msg: str, max_len: int) -> str:
     return msg if len(msg) <= max_len else msg[: max_len - 3] + "..."
+
+
+def strip_markdown(text: str) -> str:
+    """Remove markdown formatting for Twitch chat compatibility."""
+    import re
+    
+    # Remove bold/italic markers
+    text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # **bold**
+    text = re.sub(r'\*([^*]+)\*', r'\1', text)      # *italic*
+    text = re.sub(r'__([^_]+)__', r'\1', text)      # __bold__
+    text = re.sub(r'_([^_]+)_', r'\1', text)        # _italic_
+    
+    # Remove code blocks and inline code
+    text = re.sub(r'```[^`]*```', '', text)         # ```code blocks```
+    text = re.sub(r'`([^`]+)`', r'\1', text)        # `inline code`
+    
+    # Remove links but keep the text
+    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)  # [text](url)
+    text = re.sub(r'<([^>]+)>', r'\1', text)              # <url>
+    
+    # Remove headers
+    text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
+    
+    # Remove bullet points and numbering
+    text = re.sub(r'^\s*[-*+]\s+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^\s*\d+\.\s+', '', text, flags=re.MULTILINE)
+    
+    # Clean up extra whitespace
+    text = re.sub(r'\n\s*\n', ' ', text)  # Multiple newlines to single space
+    text = re.sub(r'\s+', ' ', text)      # Multiple spaces to single space
+    
+    return text.strip()
 
 
 # --------------------------- IRC Client -------------------------------
@@ -83,6 +116,8 @@ class IRCClient:
             "!trivia auto": self._cmd_trivia_auto,
             "!trivia smite": self._cmd_trivia_smite,
             "!trivia": self._cmd_trivia,
+            "!ask": self._cmd_ask,
+            "!chat": self._cmd_chat,
         }
 
     # ------------------------ Public API -----------------------------
@@ -166,6 +201,12 @@ class IRCClient:
         # Prefix match for commands that take args (e.g., !answer ...)
         if key.startswith("!answer"):
             return self._commands["!answer"](message, username)
+        
+        if key.startswith("!ask"):
+            return self._commands["!ask"](message, username)
+        
+        if key.startswith("!chat"):
+            return self._commands["!chat"](message, username)
 
         return None
     def _current_mcq_answers(self) -> list[str]:
@@ -241,6 +282,57 @@ class IRCClient:
         result = self.manager.start_trivia(self.api_handler)
         q = getattr(self.api_handler, "get_question", lambda: None)()
         return self._format_mcq(q) if q and q.get("all_answers") else result
+
+    def _cmd_ask(self, message: str, username: str) -> Optional[str]:
+        # Extract the question from the message (remove "!ask " prefix)
+        question = message[4:].strip() if len(message) > 4 else ""
+        if not question:
+            return "❌ Please provide a question after !ask"
+        
+        # Queue the async chat API call
+        asyncio.create_task(self._handle_chat_request(question, username))
+        return None  # Don't send immediate response, wait for async result
+
+    def _cmd_chat(self, message: str, username: str) -> Optional[str]:
+        # Extract the question from the message (remove "!chat " prefix)
+        question = message[6:].strip() if len(message) > 6 else ""
+        if not question:
+            return "❌ Please provide a question after !chat"
+        
+        # Queue the async chat API call
+        asyncio.create_task(self._handle_chat_request(question, username))
+        return None  # Don't send immediate response, wait for async result
+
+    async def _handle_chat_request(self, question: str, username: str) -> None:
+        """Handle async chat API request and send response to chat"""
+        try:
+            async with aiohttp.ClientSession() as session:
+                payload = {
+                    "message": question,
+                    "search_mode": "hybrid",
+                    "n_results": 3
+                }
+                async with session.post(
+                    "http://localhost:8000/chat",
+                    json=payload,
+                    headers={"Content-Type": "application/json"},
+                    timeout=aiohttp.ClientTimeout(total=10)
+                ) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        # Extract the response text from the API response
+                        raw_answer = data.get("response", "No response received")
+                        # Strip markdown formatting for Twitch chat compatibility
+                        answer = strip_markdown(raw_answer)
+                        await self._send(f"@{username} {answer}")
+                    else:
+                        await self._send(f"@{username} ❌ API error: {response.status}")
+        except aiohttp.ClientError as e:
+            LOG.error(f"Chat API request failed: {e}")
+            await self._send(f"@{username} ❌ Failed to connect to chat API")
+        except Exception as e:
+            LOG.error(f"Unexpected error in chat request: {e}")
+            await self._send(f"@{username} ❌ An error occurred")
 
     # ------------------------ Formatting ------------------------------
 
