@@ -7,20 +7,21 @@
 
 ## 🚀 Features
 
-- 💬 Chat-based Q&A directly in Twitch
-- 🤖 Local LLM-powered answers using [Ollama](https://ollama.com)
-- 🕹️ Specializes in **Smite2** knowledge and game content
-- 🔧 Async task queue for concurrent prompt handling
-- 🧠 Includes a system prompt to control the chatbot's tone and style
+- 💬 Chat-based Q&A directly in Twitch with external API integration
+- 🎲 **Database-driven trivia system** with organized categories and leaderboards
+- 🕹️ **Smite2 trivia** - 256+ questions about god abilities
+- 📊 **Multiple question types**: Multiple choice, True/False, Open-ended
+- 🏆 **User statistics & leaderboards** with automatic tracking
+- 🤖 Local LLM-powered answers using [Ollama](https://ollama.com) (legacy)
 
 ---
 
 ## 🧰 Requirements
 
 - Python 3.9+
-- [Ollama installed](https://ollama.com)
-- NVIDIA GPU with drivers installed (`nvidia-smi` should work)
+- PostgreSQL database (via Docker)
 - Twitch account and [OAuth token](https://twitchapps.com/tmi/)
+- Optional: [Ollama installed](https://ollama.com) for local LLM features
 
 ---
 
@@ -44,12 +45,17 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv sync
 ```
 
-### 4. Start Ollama Server
+### 4. Start Database
 ```bash
-ollama serve
-ollama pull tinydolphin
+# Start PostgreSQL database
+docker compose up -d
+
+# Run database migrations
+uv run alembic upgrade head
+
+# Load trivia questions into database
+uv run python -m scripts.load_questions
 ```
-You can use whichever model you would like but tinydolphin is tiny if you would like to test functionality
 
 ### 5. Configure Twitch Credentials 
 Create a .env file in the project root:
@@ -86,10 +92,16 @@ uv run python chat_listener.py
 ```
 
 ### How it works:
-* Listens for Twitch messages wrapped in {}
-Example: {who is baron samedi}
+**Trivia System:**
+- `!trivia` - Start general knowledge questions
+- `!trivia smite` - Start Smite god ability questions  
+- `!trivia auto` - Start continuous trivia mode
+- `!answer <your answer>` - Submit answers (supports letter shortcuts: a/b/c/d)
+- `!giveup` - End current question and show answer
 
-* Sends the message as a prompt to your local LLM via Ollama
+**AI Chat Integration:**
+- `!ask <question>` - Send questions to external chat API
+- `!chat <question>` - Alternative chat command
 
 * Applies a system prompt like:
 
