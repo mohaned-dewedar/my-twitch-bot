@@ -4,36 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-CherryBott is a Twitch chatbot powered by local LLMs (via Ollama) that specializes in Smite2 knowledge and interactive trivia games. The bot listens to Twitch chat for messages wrapped in `{}` and trivia commands, responding with LLM-generated answers or managing trivia sessions.
+CherryBott is a Twitch chatbot with multiple capabilities:
+1. Interactive trivia system (general knowledge + Smite-specific)
+2. Local LLM integration via Ollama (legacy, not actively used)
+3. External chat API integration for Q&A (`!ask` and `!chat` commands)
 
 ## Development Commands
 
-### Environment Setup
+### Setup
 ```bash
-# Install uv (if not already installed)
+# Install uv package manager
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install dependencies and create virtual environment automatically
+# Install dependencies and create virtual environment
 uv sync
 
-# Activate the virtual environment (optional, uv run handles this automatically)
-source .venv/bin/activate  # Linux/Mac
-# .venv\Scripts\activate    # Windows
-
-# Or run commands directly with uv (recommended)
-uv run python chat_listener.py
-```
-
-### Database Management
-```bash
-# Start PostgreSQL database (required for leaderboards)
+# Start PostgreSQL database (for leaderboards/tracking)
 docker compose up -d
 
 # Run database migrations
 uv run alembic upgrade head
-
-# Seed trivia questions (optional)
-uv run python scripts/seed_questions.py
 ```
 
 ### Running the Bot
@@ -41,87 +31,157 @@ uv run python scripts/seed_questions.py
 # Main bot entry point
 uv run python chat_listener.py
 
-# Alternative entry point for database testing
-uv run python main.py
+# Alternative: direct IRC client
+uv run python twitch/irc_client.py
 ```
 
 ### Testing
 ```bash
-# Run trivia functionality tests
-uv run python test_trivia.py
+# Run all tests
+uv run pytest
 
-# Run specific test files
-uv run python tests/test_trivia_manager.py
-uv run python tests/test_smite_handler.py
-
-# Run tests with pytest (if available)
-uv run pytest tests/
+# Run specific tests with verbose output
+uv run pytest tests/test_trivia_manager.py -v
+uv run pytest tests/test_smite_handler.py -v
 ```
 
-### Prerequisites
-- Ollama server running with a model pulled (e.g., `ollama pull tinydolphin`)
-- `.env` file with Twitch credentials:
-  ```
-  TWITCH_BOT_NAME=your_bot_username
-  TWITCH_OAUTH_TOKEN=oauth:xxxxxxxxxxxxxxxxxxxxxx
-  TWITCH_CHANNEL=your_channel_name
-  ```
+### Database Operations
+```bash
+# Create new migration
+uv run alembic revision --autogenerate -m "description"
 
-## Architecture Overview
+# Load questions into database
+uv run python -m scripts.load_questions
 
-### Core Components
+# Load specific question sources
+uv run python -m scripts.load_questions --sources smite custom_json
+uv run python -m scripts.load_questions --sources opentdb --amount 50 --balanced
 
-**twitch/**: Twitch integration layer
-- `irc_client.py`: Main WebSocket IRC client with rate limiting and command routing
-- `message_parser.py`: Parses incoming Twitch PRIVMSG format
+# Show database statistics
+uv run python -m scripts.load_questions --stats-only
+```
 
-**llm/**: LLM integration and workers
-- `ollama_manager.py`: Manages Ollama model lifecycle
-- `ollama_worker.py`: Async worker queue for LLM prompt processing
-- `trivia_handler.py`: Handles LLM-generated custom trivia questions
+## Architecture
 
-**trivia/**: Trivia game system
-- `manager.py`: Central trivia session manager, handles active games and auto-mode
-- `base.py`: Abstract base class for trivia handlers
-- `types.py`: Concrete trivia implementations (API-based and Smite-specific)
+### Main Entry Point
+**`chat_listener.py`** - Simple wrapper that creates and runs IRCClient
+**`twitch/irc_client.py`** - Core bot implementation with all functionality
 
-**db/**: Database layer (PostgreSQL with asyncpg)
-- `database.py`: Connection pool manager
-- `models.py`: Database schema definitions
-- Individual modules for channels, users, leaderboard, questions, sessions, attempts
+### Key Components
 
-**data/**: Static data and loaders
-- `data_loader.py`: Loads Smite gods data from JSON files
-- `category_loader.py`: Manages trivia categories
-- `smite_gods_*.json`: Comprehensive Smite gods data with abilities
+**IRC Client** (`twitch/irc_client.py:IRCClient`)
+- WebSocket connection to Twitch IRC (`wss://irc-ws.chat.twitch.tv:443`)
+- Command routing system with exact and prefix matching
+- Rate limiting (18 messages per 30-second window)
+- Auto-reconnection with exponential backoff
 
-### Key Design Patterns
+**Trivia System** (`trivia/`)
+- `manager.py` - Session state management, answer checking
+- `types.py` - ApiTriviaHandler (OpenTDB API) and SmiteTriviaHandler (local data)
+- Support for both single-question and auto-continuous modes
+- Multiple choice format with emoji indicators (🇦 🇧 🇨 🇩)
 
-**Async Architecture**: Heavy use of asyncio throughout for handling concurrent Twitch messages, LLM processing, and database operations.
+**Question Database System** (`data/`, `scripts/`)
+- PostgreSQL storage with organized categories and question banks
+- 4 main categories: Entertainment, Science, Culture, General
+- Support for multiple question types: multiple_choice, true_false, open_ended
+- Data sources: Smite abilities (256), Custom JSON, OpenTDB API
+- Smart category mapping groups OpenTDB's 24+ categories into clean groups
 
-**Worker Queue Pattern**: `OllamaWorkerQueue` processes LLM prompts asynchronously to prevent blocking chat responses.
+**External API Integration**
+- HTTP requests to `localhost:8000/chat` endpoint for AI responses
+- Markdown stripping for Twitch chat compatibility
+- Async request handling with proper error management
 
-**Strategy Pattern**: `TriviaBase` abstract class with concrete implementations for different trivia types (API, Smite, Custom).
+**Database Layer** (`db/`)
+- PostgreSQL with asyncpg connection pooling
+- SQLAlchemy models for users, channels, leaderboards, attempts, questions, question_banks
+- Enhanced schema with question statistics, user performance tracking
+- Automatic triggers for updating question/user stats
+- Alembic migrations for schema management
 
-**State Management**: `TriviaManager` maintains active trivia sessions and handles transitions between single-question and auto-mode.
+### Message Flow
 
-**Rate Limiting**: Built-in Twitch IRC rate limiting (18 messages per 30 seconds) in the IRC client.
+1. WebSocket receives Twitch IRC messages
+2. `parse_privmsg()` extracts username and message content  
+3. `_dispatch_command()` routes to appropriate command handler
+4. Commands return response strings that are sent back to chat
+5. Rate limiting applied before sending to Twitch
 
-## Trivia Commands
+### Chat Commands
 
-The bot supports these chat commands:
-- `!trivia` - General trivia question
-- `!trivia smite` - Smite-specific trivia
-- `!trivia auto [smite]` - Continuous trivia mode
-- `!answer <answer>` - Submit trivia answer
-- `!giveup` - Reveal answer and end round
+**Trivia Commands:**
+- `!trivia` - Start single general trivia question (MCQ format)
+- `!trivia smite` - Start single Smite god ability question  
+- `!trivia auto` - Start continuous general trivia mode
+- `!trivia auto smite` - Start continuous Smite trivia mode
+- `!answer <answer>` - Submit answer (supports letter shortcuts: a/b/c/d)
+- `!giveup` - End current question and show answer
 - `!end trivia` - Stop auto trivia mode
-- `!trivia-help` - Show command help
+- `!trivia-help` - Show help text
 
-## LLM Integration
+**AI Chat Commands:**
+- `!ask <question>` - Send question to external chat API
+- `!chat <question>` - Alternative to !ask command
 
-Messages wrapped in `{}` (e.g., `{who is baron samedi}`) are sent to the configured Ollama model with a system prompt focused on Smite2 knowledge and concise, engaging responses.
+### Configuration
+
+Required environment variables in `.env`:
+- `TWITCH_BOT_NAME` - Bot username
+- `TWITCH_OAUTH_TOKEN` - OAuth token with `chat:read chat:edit user:write:chat` scopes
+- `TWITCH_CHANNEL` - Target channel name
+- `DATABASE_URL` - PostgreSQL connection string (default: postgresql://trivia:trivia-password@localhost:5432/trivia)
+
+### Auto Trivia Mode
+
+When in auto mode (`!trivia auto` or `!trivia auto smite`):
+- Correct answers automatically trigger the next question (1-second delay)
+- `!giveup` shows answer and immediately starts next question
+- Mode persists until `!end trivia` or manual single-question commands
+
+### Answer Processing
+
+For MCQ questions, users can answer with:
+- Full answer text: `!answer The Great Wall of China`
+- Letter shortcuts: `!answer a`, `!answer b`, etc.
+- Letters are mapped to answer array indices automatically
+
+### Rate Limiting
+
+Token bucket implementation:
+- Maximum 18 messages per 30-second sliding window
+- Automatic sleep/delay when limit reached
+- Message length clamped to 450 characters for Twitch compatibility
 
 ## Database Schema
 
-Uses Alembic migrations for schema management. Key tables include channels, users, trivia_sessions, questions, user_attempts, and leaderboard for tracking trivia performance across multiple Twitch channels.
+### Question Organization
+
+**Question Banks** - Organized by source type:
+- `smite_data` - Smite god ability questions (256 questions)
+- `custom_json` - Custom questions from JSON files
+- `opentdb_api` - Questions from OpenTDB API organized by category groups
+
+**Categories** - 4 main groups with clean subcategories:
+- **Entertainment**: Movies, TV, Games, Books, Comics, Anime, etc.
+- **Science**: Technology, Nature, Math, Gadgets
+- **Culture**: History, Geography, Art, Mythology, Politics  
+- **General**: Sports, Animals, Vehicles, Celebrities
+
+**Question Types**:
+- `multiple_choice` - MCQ with 4 options stored in JSONB `answer_options`
+- `true_false` - Boolean questions with normalized "true"/"false" answers
+- `open_ended` - Free text answers (includes Smite god names)
+
+### Statistics & Leaderboards
+
+**Automatic Tracking**:
+- Question statistics: times_asked, times_correct, avg_response_time
+- User performance: total questions, correct answers, streaks
+- Type-specific stats: MCQ vs True/False vs Open-ended performance
+- Channel-specific leaderboards with per-user rankings
+
+**Database Triggers**:
+- Auto-update question stats on each attempt
+- Auto-update user stats and streaks
+- Real-time leaderboard calculations

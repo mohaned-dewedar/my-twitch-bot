@@ -1,6 +1,6 @@
 import unittest
 import os
-from data.data_loader import CustomTriviaLoader
+from data.custom import CustomTriviaLoader
 
 
 class TestCustomTriviaLoader(unittest.TestCase):

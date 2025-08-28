@@ -1,5 +1,5 @@
 import unittest
-from data.data_loader import OpenTDBClient
+from data.opentdb import OpenTDBClient
 
 
 class TestOpenTDBClient(unittest.TestCase):

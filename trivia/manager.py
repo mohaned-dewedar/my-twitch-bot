@@ -54,8 +54,8 @@ class TriviaManager:
 if __name__ == "__main__":
     # Setup
     from trivia.types import ApiTriviaHandler, SmiteTriviaHandler
-    from data.data_loader import SmiteDataLoader
-    smite_loader = SmiteDataLoader()
+    from data.smite import SmiteDataStore
+    smite_loader = SmiteDataStore()
     smite_handler = SmiteTriviaHandler(smite_loader)
     api_handler = ApiTriviaHandler()
 

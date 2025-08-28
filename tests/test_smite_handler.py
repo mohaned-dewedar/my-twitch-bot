@@ -1,14 +1,14 @@
 import unittest
 from unittest.mock import MagicMock
 from trivia.types import SmiteTriviaHandler 
-from data.data_loader import SmiteDataLoader  
+from data.smite import SmiteDataStore  
 
 
 class TestSmiteTriviaHandler(unittest.TestCase):
 
     def setUp(self):
-        # Create a mock SmiteDataLoader with deterministic behavior
-        self.mock_loader = MagicMock(spec=SmiteDataLoader)
+        # Create a mock SmiteDataStore with deterministic behavior
+        self.mock_loader = MagicMock(spec=SmiteDataStore)
         self.handler = SmiteTriviaHandler(self.mock_loader)
 
         # Setup mock data
