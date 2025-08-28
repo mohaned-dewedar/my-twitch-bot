@@ -26,7 +26,39 @@
 
 ---
 
-## 🔧 Setup 
+## 🚀 Quick Start (Automated Setup)
+
+**🍒 New! Use the automated launcher for effortless setup:**
+
+### Linux/macOS:
+```bash
+./start.sh
+```
+
+### Windows:
+```batch
+start.bat
+```
+
+### Direct Python:
+```bash
+python3 launcher.py
+```
+
+**That's it! The launcher handles everything automatically:**
+- ✅ Environment setup
+- ✅ Token generation  
+- ✅ Database initialization
+- ✅ Question loading
+- ✅ Bot startup
+
+See [LAUNCHER_GUIDE.md](LAUNCHER_GUIDE.md) for detailed launcher documentation.
+
+---
+
+## 🔧 Manual Setup (Advanced Users)
+
+If you prefer manual control or the launcher doesn't work:
 
 ### 1. Clone the Repo
 
@@ -66,28 +98,21 @@ TWITCH_BOT_NAME=your_bot_username
 TWITCH_OAUTH_TOKEN=oauth:xxxxxxxxxxxxxxxxxxxxxx
 TWITCH_CHANNEL=your_channel_name
 ```
-#### 🔐 How to Get a Twitch OAuth Token
 
-1. Go to [https://dev.twitch.tv/](https://dev.twitch.tv/) and create a **Twitch Developer account**
-2. Create a new **Application**  
-   - Choose **Confidential** as the application type (not Public)
-3. Save your **Client ID** and **Client Secret** — you’ll need them to generate a token
+### 6. Get Twitch OAuth Token
 
----
-
-#### 🔧 Install Twitch CLI
-
-Follow the official guide to install the Twitch CLI:  
-[https://dev.twitch.tv/docs/cli/](https://dev.twitch.tv/docs/cli/)
-
-Once installed, run the following command to generate a user token:
-
+**Option A: Use Twitch CLI (Recommended)**
 ```bash
+# Install Twitch CLI: https://dev.twitch.tv/docs/cli/
 twitch token -u --scopes "chat:read chat:edit user:write:chat"
 ```
-Copy the Authentication token at User Access Token : {token}
 
-### 6. Run the Bot
+**Option B: Manual Process**
+1. Go to [https://dev.twitch.tv/](https://dev.twitch.tv/) and create a **Twitch Developer account**
+2. Create a new **Application** (Choose **Confidential** type)
+3. Use your Client ID and Secret to generate tokens
+
+### 7. Run the Bot
 ```bash
 uv run python chat_listener.py
 ```
