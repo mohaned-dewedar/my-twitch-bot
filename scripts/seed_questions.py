@@ -1,7 +1,7 @@
 from db.database import Database
 from db.questions import save_question_to_bank
 from trivia.types import ApiTriviaHandler, SmiteTriviaHandler
-from data.data_loader import SmiteDataStore
+from data.smite import SmiteDataStore
 import asyncio
 
 async def seed_from_handler(handler):

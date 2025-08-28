@@ -1,7 +1,9 @@
 import re
 import time
 from typing import Optional, Tuple
-from data.data_loader import SmiteDataStore , OpenTDBClient, CustomTriviaLoader , ApiQuestionQueue, SmiteTriviaEngine
+from data.smite import SmiteDataStore, SmiteTriviaEngine
+from data.opentdb import OpenTDBClient, ApiQuestionQueue  
+from data.custom import CustomTriviaLoader
 import requests
 import random
 from html import unescape

@@ -1,6 +1,6 @@
 # 🧠 CherryBott — Twitch x LLM Smite Bot
 
-**CherryBott** is a Twitch chatbot powered by local LLMs (via [Ollama](https://ollama.com)) that answers `{chat}` messages with fun and helpful responses . I will be utilizing to integrate fun games like trivia in my chat aswell as answer question about Smite2 Gods and Patchnotes
+**CherryBott** is a Twitch chatbot featuring interactive trivia games and external API chat integration. Originally designed with local LLM support via Ollama, it now focuses on database-driven trivia and external chat API responses for Smite2 and general knowledge questions.
 
 ![CherryBott Example Response](example.png)
 ---
@@ -12,7 +12,8 @@
 - 🕹️ **Smite2 trivia** - 256+ questions about god abilities
 - 📊 **Multiple question types**: Multiple choice, True/False, Open-ended
 - 🏆 **User statistics & leaderboards** with automatic tracking
-- 🤖 Local LLM-powered answers using [Ollama](https://ollama.com) (legacy)
+- 🔗 **External chat API integration** for AI-powered responses
+- 🗂️ **Organized data architecture** with focused, maintainable modules
 
 ---
 
@@ -21,7 +22,7 @@
 - Python 3.9+
 - PostgreSQL database (via Docker)
 - Twitch account and [OAuth token](https://twitchapps.com/tmi/)
-- Optional: [Ollama installed](https://ollama.com) for local LLM features
+- Optional: External chat API endpoint (see `!ask` and `!chat` commands)
 
 ---
 
@@ -127,6 +128,32 @@ CherryBott supports interactive trivia games directly in Twitch chat! Users can 
 
 Enjoy competing with your chat and see who knows the most!
 
+---
+
+## 🏗️ Architecture & Code Organization
+
+CherryBott has been recently refactored for better maintainability and code organization:
+
+### 📁 Data Layer Structure
+```
+data/
+├── smite/                    # Smite-specific data handling
+│   ├── smite_data_store.py  # God and ability data management
+│   └── smite_trivia_engine.py # Smite trivia game logic
+├── opentdb/                  # OpenTDB API integration  
+│   ├── opentdb_client.py    # API client with rate limiting
+│   └── question_queue.py    # Pre-loading question buffer
+└── custom/                   # Custom question loading
+    └── custom_trivia_loader.py # JSON file-based questions
+```
+
+### 🎯 Key Improvements
+- **Single Responsibility**: Each module has one clear purpose
+- **Comprehensive Documentation**: Detailed docstrings and comments
+- **Better Testability**: Smaller, focused modules are easier to test
+- **Reduced Complexity**: Eliminated large "god classes" 
+- **Legacy Code Removal**: Cleaned up unused Ollama integration
+
 ### 🧪 WIP / Future Tooling
 
 Planned features to enhance CherryBott's intelligence and usability:
@@ -148,10 +175,22 @@ Planned features to enhance CherryBott's intelligence and usability:
 
 ### 🛠️ TODO & Improvements
 
+#### ✅ Recently Completed
+- [x] **Code Architecture Refactoring** - Split monolithic data loader into focused modules
+- [x] **Legacy Code Removal** - Cleaned up unused Ollama integration  
+- [x] **Comprehensive Documentation** - Added detailed docstrings and comments
+- [x] **Test Coverage** - Updated and validated all test suites
+
+#### 🔄 Next Phase Priorities  
+- [ ] **IRC Client Refactoring** - Split large IRC client into smaller, focused classes
+- [ ] **Dependency Injection** - Replace singleton database pattern
+- [ ] **Configuration Management** - Centralized config with validation
+- [ ] **Error Handling** - Standardized error handling with custom exceptions
+
+#### 🚀 Future Features
 - [ ] `.txt` file or UI to change the system prompt without code edits  
 - [ ] Configurable model swapping (via `.env` or CLI args)  
 - [ ] Packaged `.exe` or launcher for non-technical users  
 - [ ] Web dashboard to monitor or test prompts outside of Twitch  
-- [ ] Modularize LLM logic into a shared package (`smite-chat-core`)  
 
 I will most likely stop working on this for a bit to scrape and gather the needed information to make this viable for RAG and make it useful for my chat then come back to this.

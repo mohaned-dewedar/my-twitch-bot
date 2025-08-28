@@ -1,14 +1,15 @@
 import unittest
 from unittest.mock import MagicMock, patch
 from trivia.types import ApiTriviaHandler
-from data.data_loader import OpenTDBClient , CustomTriviaLoader
+from data.opentdb import OpenTDBClient
+from data.custom import CustomTriviaLoader
 
 
 class TestApiTriviaHandler(unittest.TestCase):
     def setUp(self):
         # Patch OpenTDBClient and CustomTriviaLoader inside the handler
-        patcher_api = patch('data.data_loader.OpenTDBClient')
-        patcher_custom = patch('data.data_loader.CustomTriviaLoader')
+        patcher_api = patch('data.opentdb.OpenTDBClient')
+        patcher_custom = patch('data.custom.CustomTriviaLoader')
 
         self.mock_api_class = patcher_api.start()
         self.mock_custom_class = patcher_custom.start()

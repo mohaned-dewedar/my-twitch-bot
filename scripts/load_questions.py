@@ -10,7 +10,9 @@ import hashlib
 import argparse
 from typing import List, Dict
 
-from data.data_loader import SmiteDataStore, OpenTDBClient, CustomTriviaLoader
+from data.smite import SmiteDataStore
+from data.opentdb import OpenTDBClient
+from data.custom import CustomTriviaLoader
 from data.category_mapping import get_category_group, get_clean_category_name, get_balanced_category_selection
 from db.database import Database
 from config import DATABASE_URL

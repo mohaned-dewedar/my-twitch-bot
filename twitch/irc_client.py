@@ -8,9 +8,7 @@ from websockets import WebSocketClientProtocol
 import aiohttp
 from config import TWITCH_BOT_NAME, TWITCH_OAUTH_TOKEN, TWITCH_CHANNEL
 from twitch.message_parser import parse_privmsg
-from llm.ollama_worker import OllamaWorkerQueue
-from data.data_loader import SmiteDataStore
-from trivia.types import ApiTriviaHandler, SmiteTriviaHandler
+from db.trivia_handlers import GeneralTriviaHandler, SmiteTriviaHandler
 from trivia.manager import TriviaManager
 
 
@@ -85,18 +83,31 @@ class IRCClient:
         self.settings = settings
         self._ws: Optional[WebSocketClientProtocol] = None
 
-        # External workers / data
-        self.ollama_queue = OllamaWorkerQueue()
-        self.api_handler = ApiTriviaHandler(use_custom=False)
-
-        self.smite_store = SmiteDataStore()
-        if not self.smite_store.load_data():
-            LOG.warning("Failed to load Smite data.")
-        else:
-            LOG.info("Smite data loaded.")
+        # External workers / data - removed legacy Ollama integration
+        
+        # Database handlers (will be initialized asynchronously)
+        self.general_handler = None
+        self.smite_handler = None
 
         self.manager = TriviaManager()
-        self.smite_handler = SmiteTriviaHandler(self.smite_store)
+
+    async def _init_database_handlers(self):
+        """Initialize database trivia handlers"""
+        from config import DATABASE_URL
+        from db.database import Database
+        
+        try:
+            # Initialize database connection
+            db = await Database.init(DATABASE_URL)
+            
+            # Create handlers
+            self.general_handler = GeneralTriviaHandler(db)
+            self.smite_handler = SmiteTriviaHandler(db)
+            
+            LOG.info("Database trivia handlers initialized successfully")
+        except Exception as e:
+            LOG.error(f"Failed to initialize database handlers: {e}")
+            # Fallback to None handlers - commands will show error messages
 
         # Trivia mode
         self.auto_trivia: bool = False
@@ -126,7 +137,10 @@ class IRCClient:
         """
         Start background workers and maintain a persistent IRC connection with backoff.
         """
-        asyncio.create_task(self.ollama_queue.start())
+        # Legacy Ollama worker removed
+        
+        # Initialize database handlers
+        await self._init_database_handlers()
 
         backoff = 1
         while True:
@@ -171,22 +185,64 @@ class IRCClient:
         if response:
             await self._send(response)
 
-        # If !giveup in auto mode, send next question separately
+        # Handle async trivia question loading
         if self._pending_auto_question:
-            await asyncio.sleep(1)
-            await self._send(self._pending_auto_question)
-            self._pending_auto_question = None
+            await asyncio.sleep(0.5)
+            await self._handle_pending_trivia_question()
 
         # In auto mode, if a correct answer just landed, queue the next question
         if self.auto_trivia and self.manager.should_ask_next():
             await asyncio.sleep(1)
             if self.auto_trivia_type == "smite":
-                await self._send(self.manager.start_trivia(self.smite_handler, force=True))
-            else:
-                self.manager.start_trivia(self.api_handler, force=True)
-                q = getattr(self.api_handler, "get_question", lambda: None)()
-                if q and q.get("all_answers"):
-                    await self._send(self._format_mcq(q))
+                if self.smite_handler:
+                    question_response = await self.smite_handler.start(force=True)
+                    self._set_active_handler(self.smite_handler, force=True)
+                    await self._send(question_response)
+            elif self.auto_trivia_type == "general":
+                if self.general_handler:
+                    question_response = await self.general_handler.start(force=True)
+                    self._set_active_handler(self.general_handler, force=True)
+                    await self._send(question_response)
+
+    async def _handle_pending_trivia_question(self):
+        """Handle pending async trivia question loading"""
+        if not self._pending_auto_question:
+            return
+            
+        pending_type = self._pending_auto_question
+        self._pending_auto_question = None
+        
+        try:
+            if pending_type == "smite":
+                if self.smite_handler:
+                    response = await self.smite_handler.start(force=True)
+                    self._set_active_handler(self.smite_handler, force=True)
+                    await self._send(response)
+            elif pending_type == "smite_single":
+                if self.smite_handler:
+                    response = await self.smite_handler.start()
+                    self._set_active_handler(self.smite_handler)
+                    await self._send(response)
+            elif pending_type == "general":
+                if self.general_handler:
+                    response = await self.general_handler.start(force=True)
+                    self._set_active_handler(self.general_handler, force=True)
+                    await self._send(response)
+            elif pending_type == "general_single":
+                if self.general_handler:
+                    response = await self.general_handler.start()
+                    self._set_active_handler(self.general_handler)
+                    await self._send(response)
+        except Exception as e:
+            LOG.error(f"Failed to load trivia question: {e}")
+            await self._send("❌ Failed to load trivia question. Please try again.")
+
+    def _set_active_handler(self, handler, force: bool = False):
+        """Set the active handler without calling start() (since we handle that async)"""
+        if self.manager.active_handler and self.manager.active_handler.is_active() and not force:
+            return  # Don't override active handler unless forced
+        self.manager.active_handler = handler
+        self.manager._last_answer_correct = False
 
     # ------------------------ Commands --------------------------------
 
@@ -226,11 +282,9 @@ class IRCClient:
         answer = self.manager.end_trivia()
         if self.auto_trivia:
             if self.auto_trivia_type == "smite":
-                self._pending_auto_question = self.manager.start_trivia(self.smite_handler, force=True)
+                self._pending_auto_question = "smite"
             else:
-                self.manager.start_trivia(self.api_handler, force=True)
-                q = getattr(self.api_handler, "get_question", lambda: None)()
-                self._pending_auto_question = self._format_mcq(q) if q and q.get("all_answers") else "Auto trivia continues!"
+                self._pending_auto_question = "general"
         else:
             self.auto_trivia = False
             self.auto_trivia_type = None
@@ -262,26 +316,38 @@ class IRCClient:
 
 
     def _cmd_trivia_auto_smite(self, _: str, __: str) -> str:
+        if not self.smite_handler:
+            return "❌ Database not initialized. Please try again."
         self.auto_trivia, self.auto_trivia_type = True, "smite"
-        return self.manager.start_trivia(self.smite_handler, force=True)
+        # Store as pending since start() is async
+        self._pending_auto_question = "smite"
+        return "🎯 Starting auto Smite trivia mode..."
 
     def _cmd_trivia_auto(self, _: str, __: str) -> str:
-        self.auto_trivia, self.auto_trivia_type = True, "api"
-        self.manager.start_trivia(self.api_handler, force=True)
-        q = getattr(self.api_handler, "get_question", lambda: None)()
-        return self._format_mcq(q) if q and q.get("all_answers") else "Auto trivia started!"
+        if not self.general_handler:
+            return "❌ Database not initialized. Please try again."
+        self.auto_trivia, self.auto_trivia_type = True, "general"
+        # Store as pending since start() is async
+        self._pending_auto_question = "general"
+        return "📚 Starting auto general trivia mode..."
 
     def _cmd_trivia_smite(self, _: str, __: str) -> str:
+        if not self.smite_handler:
+            return "❌ Database not initialized. Please try again."
         self.auto_trivia = False
         self.auto_trivia_type = None
-        return self.manager.start_trivia(self.smite_handler)
+        # Store as pending since start() is async
+        self._pending_auto_question = "smite_single"
+        return "🎯 Loading Smite trivia question..."
 
     def _cmd_trivia(self, _: str, __: str) -> str:
+        if not self.general_handler:
+            return "❌ Database not initialized. Please try again."
         self.auto_trivia = False
         self.auto_trivia_type = None
-        result = self.manager.start_trivia(self.api_handler)
-        q = getattr(self.api_handler, "get_question", lambda: None)()
-        return self._format_mcq(q) if q and q.get("all_answers") else result
+        # Store as pending since start() is async
+        self._pending_auto_question = "general_single"
+        return "📚 Loading general trivia question..."
 
     def _cmd_ask(self, message: str, username: str) -> Optional[str]:
         # Extract the question from the message (remove "!ask " prefix)
@@ -333,15 +399,6 @@ class IRCClient:
         except Exception as e:
             LOG.error(f"Unexpected error in chat request: {e}")
             await self._send(f"@{username} ❌ An error occurred")
-
-    # ------------------------ Formatting ------------------------------
-
-    @staticmethod
-    def _format_mcq(q: dict) -> str:
-        answers = q.get("all_answers", [])
-        opts = " ".join(f"{chr(0x1F1E6 + i)} {ans}" for i, ans in enumerate(answers))
-        cat = q.get("category", "Unknown")
-        return f"🎲 {q['question']} | {opts} | Category: {cat}"
 
     # ------------------------ Outbound IRC ----------------------------
 
