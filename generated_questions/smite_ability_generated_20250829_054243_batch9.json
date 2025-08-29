@@ -1,0 +1,154 @@
+{
+  "bank_name": "smite_ability_generated_20250829_054243_batch9",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the damage scaling of Awilix's Summon Suku ability in Smite?",
+      "options": [
+        "60%",
+        "75%",
+        "80%",
+        "70%"
+      ],
+      "correct_answer": "70%",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_summon_suku_god_awilix",
+        "source_document_name": "Summon Suku",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:42:04.861523",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage scaling percentage of Awilix's Feather Step ability?",
+      "options": [
+        "40%",
+        "50%",
+        "60%",
+        "45%"
+      ],
+      "correct_answer": "45%",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_feather_step_god_awilix",
+        "source_document_name": "Feather Step",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:42:13.704765",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the maximum knocked up damage dealt by Awilix's Moonlight Charge ability at its highest level?",
+      "options": [
+        "120",
+        "190",
+        "250",
+        "290"
+      ],
+      "correct_answer": "290",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_moonlight_charge_god_awilix",
+        "source_document_name": "Moonlight Charge",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:42:16.642384",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown duration of Awilix's Gravity Surge ultimate ability in Smite?",
+      "options": [
+        "80 seconds",
+        "90 seconds",
+        "100 seconds",
+        "110 seconds"
+      ],
+      "correct_answer": "90 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_gravity_surge_god_awilix",
+        "source_document_name": "Gravity Surge",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:42:19.934014",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the maximum bonus damage provided by Bacchus' Drunk-O-Meter passive ability at level 1?",
+      "options": [
+        "50",
+        "60",
+        "70",
+        "80"
+      ],
+      "correct_answer": "70",
+      "correct_letter": "C",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_drunk-o-meter_god_bacchus",
+        "source_document_name": "Drunk-O-Meter",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:42:29.031772",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the maximum Drunkenness percentage Bacchus' Chug ability can reach at level 6?",
+      "options": [
+        "58%",
+        "64%",
+        "70%",
+        "75%"
+      ],
+      "correct_answer": "70%",
+      "correct_letter": "C",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_chug_god_bacchus",
+        "source_document_name": "Chug",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:42:32.188018",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the range of Bacchus' Belly Flop ability in Smite?",
+      "options": [
+        "8.5 meters",
+        "9 meters",
+        "8.8 meters",
+        "10 meters"
+      ],
+      "correct_answer": "8.8 meters",
+      "correct_letter": "C",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_belly_flop_god_bacchus",
+        "source_document_name": "Belly Flop",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:42:41.104035",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}

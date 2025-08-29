@@ -18,16 +18,17 @@ class TriviaManager:
         self._last_answer_correct = False
         return handler.start()
 
-    def submit_answer(self, answer: str, username: Optional[str] = None) -> str:
+    async def submit_answer(self, answer: str, username: Optional[str] = None, 
+                           user_id: Optional[int] = None, channel_id: Optional[int] = None, 
+                           session_id: Optional[int] = None) -> str:
         if not self.active_handler or not self.active_handler.is_active():
             return "❌ No active trivia to answer."
-        result = self.active_handler.check_answer(answer, username)
-        # Detect if answer was correct for auto mode
-        if "correct" in result.lower() and "wrong" not in result.lower():
-            self._last_answer_correct = True
-        else:
-            self._last_answer_correct = False
-        return result
+        is_correct, message = await self.active_handler.check_answer(
+            answer, username, user_id, channel_id, session_id
+        )
+        # Use the boolean value directly instead of parsing the message
+        self._last_answer_correct = is_correct
+        return message
     def should_ask_next(self) -> bool:
         # Used by IRCClient to know if next question should be asked in auto mode
         return self._last_answer_correct

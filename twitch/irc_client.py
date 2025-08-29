@@ -1,18 +1,36 @@
+"""
+Refactored Twitch IRC client using focused, single-responsibility classes.
+
+This is a clean rewrite of the IRC client that delegates responsibilities
+to specialized components for better maintainability and testing.
+"""
+
 import asyncio
 import logging
-import time
 from dataclasses import dataclass
-from typing import Callable, Dict, Optional
-import websockets
-from websockets import WebSocketClientProtocol
-import aiohttp
+from typing import Optional
+
+# Configuration and utilities
 from config import TWITCH_BOT_NAME, TWITCH_OAUTH_TOKEN, TWITCH_CHANNEL
 from twitch.message_parser import parse_privmsg
+
+# Refactored components
+from twitch.irc_connection import IRCConnection, IRCCredentials
+from twitch.rate_limiter import RateLimiter, RateLimitSettings
+from twitch.command_router import CommandRouter
+from twitch.trivia_orchestrator import TriviaOrchestrator
+from twitch.chat_api_client import ChatAPIClient
+from twitch.message_utils import is_valid_twitch_message
+
+# Business logic
 from db.trivia_handlers import GeneralTriviaHandler, SmiteTriviaHandler
 from trivia.manager import TriviaManager
 
+# Database integration
+from db.users import get_or_create_user
+from db.channels import get_channel_id, add_channel
+from db.sessions import start_session, get_active_session
 
-# --------------------------- Logging ---------------------------------
 
 LOG = logging.getLogger(__name__)
 logging.basicConfig(
@@ -21,407 +39,314 @@ logging.basicConfig(
 )
 
 
-# --------------------------- Settings --------------------------------
-
 @dataclass(frozen=True)
 class TwitchSettings:
+    """Consolidated settings for Twitch IRC client."""
     uri: str = "wss://irc-ws.chat.twitch.tv:443"
     nick: str = TWITCH_BOT_NAME
     oauth: str = TWITCH_OAUTH_TOKEN
     channel: str = TWITCH_CHANNEL
-    # Rate limit: Twitch IRC recommends < 20 msgs / 30s for normal users
-    max_msg_len: int = 450
-    burst: int = 18
-    window_seconds: int = 30
+    chat_api_url: str = "http://localhost:8000/chat"
 
-
-# --------------------------- Utilities --------------------------------
-
-def clamp_chat(msg: str, max_len: int) -> str:
-    return msg if len(msg) <= max_len else msg[: max_len - 3] + "..."
-
-
-def strip_markdown(text: str) -> str:
-    """Remove markdown formatting for Twitch chat compatibility."""
-    import re
-    
-    # Remove bold/italic markers
-    text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # **bold**
-    text = re.sub(r'\*([^*]+)\*', r'\1', text)      # *italic*
-    text = re.sub(r'__([^_]+)__', r'\1', text)      # __bold__
-    text = re.sub(r'_([^_]+)_', r'\1', text)        # _italic_
-    
-    # Remove code blocks and inline code
-    text = re.sub(r'```[^`]*```', '', text)         # ```code blocks```
-    text = re.sub(r'`([^`]+)`', r'\1', text)        # `inline code`
-    
-    # Remove links but keep the text
-    text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)  # [text](url)
-    text = re.sub(r'<([^>]+)>', r'\1', text)              # <url>
-    
-    # Remove headers
-    text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
-    
-    # Remove bullet points and numbering
-    text = re.sub(r'^\s*[-*+]\s+', '', text, flags=re.MULTILINE)
-    text = re.sub(r'^\s*\d+\.\s+', '', text, flags=re.MULTILINE)
-    
-    # Clean up extra whitespace
-    text = re.sub(r'\n\s*\n', ' ', text)  # Multiple newlines to single space
-    text = re.sub(r'\s+', ' ', text)      # Multiple spaces to single space
-    
-    return text.strip()
-
-
-# --------------------------- IRC Client -------------------------------
 
 class IRCClient:
     """
-    Twitch IRC client with a minimal command router and trivia workflow.
+    Refactored Twitch IRC client with focused responsibilities.
+    
+    This client coordinates between specialized components:
+    - IRCConnection: Pure IRC protocol handling
+    - RateLimiter: Message rate limiting
+    - CommandRouter: Command dispatch
+    - TriviaOrchestrator: Auto trivia flow management
+    - ChatAPIClient: External API integration
+    - TriviaManager: Trivia session state
     """
+    
     def __init__(self, settings: TwitchSettings = TwitchSettings()) -> None:
+        """
+        Initialize IRC client with specialized components.
+        
+        Args:
+            settings: Configuration for Twitch connection
+        """
         self.settings = settings
-        self._ws: Optional[WebSocketClientProtocol] = None
-
-        # External workers / data - removed legacy Ollama integration
         
-        # Database handlers (will be initialized asynchronously)
-        self.general_handler = None
-        self.smite_handler = None
-
+        # Initialize specialized components
+        self._setup_components()
+        
+        # Initialize business logic components
         self.manager = TriviaManager()
-
-    async def _init_database_handlers(self):
-        """Initialize database trivia handlers"""
-        from config import DATABASE_URL
-        from db.database import Database
+        self.general_handler: Optional[GeneralTriviaHandler] = None
+        self.smite_handler: Optional[SmiteTriviaHandler] = None
         
+        # Database state
+        self.channel_id: Optional[int] = None
+        self.current_session_id: Optional[int] = None
+    
+    def _setup_components(self) -> None:
+        """Initialize and configure all specialized components."""
+        # IRC connection
+        self.connection = IRCConnection(self.settings.uri)
+        credentials = IRCCredentials(
+            nick=self.settings.nick,
+            oauth=self.settings.oauth,
+            channel=self.settings.channel
+        )
+        self.connection.set_credentials(credentials)
+        self.connection.set_message_handler(self._handle_irc_message)
+        
+        # Rate limiting
+        rate_settings = RateLimitSettings(burst=18, window_seconds=30, max_msg_len=450)
+        self.rate_limiter = RateLimiter(rate_settings)
+        
+        # Command routing
+        self.command_router = CommandRouter()
+        
+        # Trivia orchestration
+        self.trivia_orchestrator = TriviaOrchestrator()
+        self.trivia_orchestrator.set_message_sender(self._send_message)
+        
+        # External API client
+        self.chat_api = ChatAPIClient(self.settings.chat_api_url)
+        self.chat_api.set_message_sender(self._send_message)
+        
+        # Register commands after all components are created
+        self._register_commands()
+    
+    def _register_commands(self) -> None:
+        """Register all chat commands with their handlers."""
+        # Exact command matches
+        exact_commands = {
+            "!trivia-help": self._cmd_trivia_help,
+            "!giveup": self._cmd_giveup,
+            "!end trivia": self._cmd_end_trivia,
+            "!trivia auto smite": self._cmd_trivia_auto_smite,
+            "!trivia auto": self._cmd_trivia_auto,
+            "!trivia smite": self._cmd_trivia_smite,
+            "!trivia": self._cmd_trivia,
+        }
+        self.command_router.register_commands_batch(exact_commands)
+        
+        # Prefix commands (take arguments)
+        self.command_router.register_prefix_command("!answer", self._cmd_answer)
+        self.command_router.register_prefix_command("!ask", self.chat_api.handle_ask_command)
+        self.command_router.register_prefix_command("!chat", self.chat_api.handle_chat_command)
+    
+    async def run(self) -> None:
+        """
+        Start the IRC client with automatic reconnection.
+        
+        Initializes database handlers and maintains persistent connection
+        with exponential backoff on failures.
+        """
+        LOG.info("Starting CherryBott IRC client...")
+        
+        # Initialize database handlers
+        await self._init_database_handlers()
+        
+        # Connection loop with backoff
+        backoff = 1
+        while True:
+            try:
+                await self._connect_and_run()
+                backoff = 1  # Reset on successful connection
+            except asyncio.CancelledError:
+                LOG.info("Client shutdown requested")
+                break
+            except Exception as e:
+                LOG.warning(f"Connection failed: {e}. Reconnecting in {backoff}s")
+                await asyncio.sleep(backoff)
+                backoff = min(backoff * 2, 30)  # Max 30s backoff
+    
+    async def _connect_and_run(self) -> None:
+        """Connect to IRC and run the message loop."""
+        await self.connection.connect_and_authenticate()
+        await self.connection.message_loop()
+    
+    async def _init_database_handlers(self) -> None:
+        """Initialize database trivia handlers and channel registration."""
         try:
+            from config import DATABASE_URL
+            from db.database import Database
+            
             # Initialize database connection
             db = await Database.init(DATABASE_URL)
+            
+            # Register/get channel in database
+            await self._init_database_channel()
             
             # Create handlers
             self.general_handler = GeneralTriviaHandler(db)
             self.smite_handler = SmiteTriviaHandler(db)
             
+            # Configure trivia orchestrator
+            self.trivia_orchestrator.set_handlers(self.general_handler, self.smite_handler)
+            
             LOG.info("Database trivia handlers initialized successfully")
         except Exception as e:
             LOG.error(f"Failed to initialize database handlers: {e}")
-            # Fallback to None handlers - commands will show error messages
-
-        # Trivia mode
-        self.auto_trivia: bool = False
-        self.auto_trivia_type: Optional[str] = None  # "api" | "smite" | None
-        self._pending_auto_question: Optional[str] = None
-
-        # Rate limiting
-        self._sent_timestamps: list[float] = []
-
-        # Command routing
-        self._commands: Dict[str, Callable[[str, str], Optional[str]]] = {
-            "!trivia-help": self._cmd_trivia_help,
-            "!giveup": self._cmd_giveup,
-            "!end trivia": self._cmd_end_trivia,
-            "!answer": self._cmd_answer,
-            "!trivia auto smite": self._cmd_trivia_auto_smite,
-            "!trivia auto": self._cmd_trivia_auto,
-            "!trivia smite": self._cmd_trivia_smite,
-            "!trivia": self._cmd_trivia,
-            "!ask": self._cmd_ask,
-            "!chat": self._cmd_chat,
+            # Handlers remain None - commands will show error messages
+    
+    async def _init_database_channel(self) -> None:
+        """Register the channel in the database and get channel_id."""
+        try:
+            # Try to get existing channel
+            self.channel_id = await get_channel_id(self.settings.channel)
+            
+            if self.channel_id is None:
+                # Create new channel record
+                await add_channel(
+                    twitch_channel_id=self.settings.channel,
+                    name=self.settings.channel
+                )
+                self.channel_id = await get_channel_id(self.settings.channel)
+                LOG.info(f"Created new channel record: {self.settings.channel} -> {self.channel_id}")
+            else:
+                LOG.info(f"Using existing channel: {self.settings.channel} -> {self.channel_id}")
+                
+        except Exception as e:
+            LOG.error(f"Failed to initialize channel in database: {e}")
+            self.channel_id = None
+    
+    async def _handle_irc_message(self, raw_message: str) -> None:
+        """
+        Handle incoming IRC message.
+        
+        Args:
+            raw_message: Raw IRC message from WebSocket
+        """
+        # Parse IRC message
+        parsed = parse_privmsg(raw_message)
+        if not parsed:
+            return
+        
+        username = parsed["user"]
+        message = parsed["message"]
+        
+        # Route to command handler
+        response = await self.command_router.dispatch_command(message, username)
+        if response:
+            await self._send_message(response)
+        
+        # Handle async trivia operations
+        await self._handle_trivia_flow()
+    
+    async def _handle_trivia_flow(self) -> None:
+        """Handle complex trivia flow operations."""
+        # Process pending async questions
+        await self.trivia_orchestrator.handle_pending_questions(self.manager)
+        
+        # Handle auto-trivia progression
+        await self.trivia_orchestrator.handle_auto_progression(self.manager)
+    
+    async def _send_message(self, message: str) -> None:
+        """
+        Send a message to chat with rate limiting.
+        
+        Args:
+            message: Message text to send
+        """
+        if not is_valid_twitch_message(message):
+            LOG.warning(f"Invalid message rejected: {repr(message)}")
+            return
+        
+        # Apply rate limiting
+        await self.rate_limiter.wait_if_needed()
+        
+        # Clamp message length and send
+        clamped_message = self.rate_limiter.clamp_message_length(message)
+        await self.connection.send_chat_message(clamped_message)
+        
+        # Record for rate limiting
+        self.rate_limiter.record_message_sent()
+    
+    # ======================== COMMAND HANDLERS ========================
+    
+    def _cmd_trivia_help(self, _: str, __: str) -> str:
+        """Handle !trivia-help command."""
+        return self.manager.get_help()
+    
+    def _cmd_giveup(self, _: str, __: str) -> str:
+        """Handle !giveup command."""
+        return self.trivia_orchestrator.handle_giveup(self.manager)
+    
+    def _cmd_end_trivia(self, _: str, __: str) -> str:
+        """Handle !end trivia command."""
+        return self.trivia_orchestrator.end_trivia_mode()
+    
+    async def _cmd_answer(self, message: str, username: str) -> str:
+        """Handle !answer command with MCQ shortcuts."""
+        raw_answer = message[len("!answer"):].strip()
+        
+        # Handle letter shortcuts for MCQ
+        if len(raw_answer) >= 1:
+            first_word = raw_answer.split()[0].strip().lower()
+            if len(first_word) == 1 and "a" <= first_word <= "z":
+                # Try to convert letter to MCQ option
+                if self.manager.active_handler:
+                    question = self.manager.active_handler.get_question()
+                    if question and question.get("answer_options"):
+                        options = question["answer_options"]
+                        letter_index = ord(first_word) - ord("a")
+                        if 0 <= letter_index < len(options):
+                            raw_answer = options[letter_index]
+        
+        # Get database context for tracking
+        user_id = None
+        session_id = self.current_session_id
+        
+        if self.channel_id is not None:
+            try:
+                user_id = await get_or_create_user(username)
+                # Create session if none exists
+                if session_id is None:
+                    session_id = await start_session(self.channel_id, user_id)
+                    self.current_session_id = session_id
+                    LOG.info(f"Started new trivia session: {session_id}")
+            except Exception as e:
+                LOG.error(f"Failed to get user/session info: {e}")
+        
+        return await self.manager.submit_answer(
+            raw_answer, username, user_id, self.channel_id, session_id
+        )
+    
+    def _cmd_trivia_auto_smite(self, _: str, __: str) -> str:
+        """Handle !trivia auto smite command."""
+        return self.trivia_orchestrator.start_auto_trivia("smite")
+    
+    def _cmd_trivia_auto(self, _: str, __: str) -> str:
+        """Handle !trivia auto command."""
+        return self.trivia_orchestrator.start_auto_trivia("general")
+    
+    def _cmd_trivia_smite(self, _: str, __: str) -> str:
+        """Handle !trivia smite command."""
+        return self.trivia_orchestrator.start_single_trivia("smite")
+    
+    def _cmd_trivia(self, _: str, __: str) -> str:
+        """Handle !trivia command."""
+        return self.trivia_orchestrator.start_single_trivia("general")
+    
+    # ======================== STATUS & DEBUGGING ========================
+    
+    def get_status(self) -> dict:
+        """Get comprehensive client status."""
+        return {
+            "connection": self.connection.get_connection_info(),
+            "rate_limiter": self.rate_limiter.get_current_usage(),
+            "trivia_orchestrator": self.trivia_orchestrator.get_status(),
+            "chat_api": self.chat_api.get_status(),
+            "commands": self.command_router.get_registered_commands(),
+            "trivia_manager": self.manager.get_status() if hasattr(self.manager, 'get_status') else "active"
         }
 
-    # ------------------------ Public API -----------------------------
 
-    async def run(self) -> None:
-        """
-        Start background workers and maintain a persistent IRC connection with backoff.
-        """
-        # Legacy Ollama worker removed
-        
-        # Initialize database handlers
-        await self._init_database_handlers()
-
-        backoff = 1
-        while True:
-            try:
-                await self._connect_and_loop()
-                backoff = 1
-            except asyncio.CancelledError:
-                raise
-            except Exception as e:
-                LOG.warning("Disconnected: %s. Reconnecting in %ss", e, backoff)
-                await asyncio.sleep(backoff)
-                backoff = min(backoff * 2, 30)
-
-    # ------------------------ Core Loop ------------------------------
-
-    async def _connect_and_loop(self) -> None:
-        async with websockets.connect(self.settings.uri) as ws:
-            self._ws = ws
-            await ws.send(f"PASS {self.settings.oauth}")
-            await ws.send(f"NICK {self.settings.nick}")
-            await ws.send(f"JOIN #{self.settings.channel}")
-            LOG.info("Connected to #%s as %s", self.settings.channel, self.settings.nick)
-
-            async for raw in ws:
-                msg = raw.strip()
-                LOG.debug("<< %s", msg)
-
-                if msg.startswith("PING"):
-                    await ws.send("PONG :tmi.twitch.tv")
-                    continue
-
-                parsed = parse_privmsg(msg)
-                if not parsed:
-                    continue
-
-                await self._handle_message(parsed["user"], parsed["message"])
-
-    # ------------------------ Message Handling -----------------------
-
-    async def _handle_message(self, username: str, message: str) -> None:
-        response = self._dispatch_command(message, username)
-        if response:
-            await self._send(response)
-
-        # Handle async trivia question loading
-        if self._pending_auto_question:
-            await asyncio.sleep(0.5)
-            await self._handle_pending_trivia_question()
-
-        # In auto mode, if a correct answer just landed, queue the next question
-        if self.auto_trivia and self.manager.should_ask_next():
-            await asyncio.sleep(1)
-            if self.auto_trivia_type == "smite":
-                if self.smite_handler:
-                    question_response = await self.smite_handler.start(force=True)
-                    self._set_active_handler(self.smite_handler, force=True)
-                    await self._send(question_response)
-            elif self.auto_trivia_type == "general":
-                if self.general_handler:
-                    question_response = await self.general_handler.start(force=True)
-                    self._set_active_handler(self.general_handler, force=True)
-                    await self._send(question_response)
-
-    async def _handle_pending_trivia_question(self):
-        """Handle pending async trivia question loading"""
-        if not self._pending_auto_question:
-            return
-            
-        pending_type = self._pending_auto_question
-        self._pending_auto_question = None
-        
-        try:
-            if pending_type == "smite":
-                if self.smite_handler:
-                    response = await self.smite_handler.start(force=True)
-                    self._set_active_handler(self.smite_handler, force=True)
-                    await self._send(response)
-            elif pending_type == "smite_single":
-                if self.smite_handler:
-                    response = await self.smite_handler.start()
-                    self._set_active_handler(self.smite_handler)
-                    await self._send(response)
-            elif pending_type == "general":
-                if self.general_handler:
-                    response = await self.general_handler.start(force=True)
-                    self._set_active_handler(self.general_handler, force=True)
-                    await self._send(response)
-            elif pending_type == "general_single":
-                if self.general_handler:
-                    response = await self.general_handler.start()
-                    self._set_active_handler(self.general_handler)
-                    await self._send(response)
-        except Exception as e:
-            LOG.error(f"Failed to load trivia question: {e}")
-            await self._send("❌ Failed to load trivia question. Please try again.")
-
-    def _set_active_handler(self, handler, force: bool = False):
-        """Set the active handler without calling start() (since we handle that async)"""
-        if self.manager.active_handler and self.manager.active_handler.is_active() and not force:
-            return  # Don't override active handler unless forced
-        self.manager.active_handler = handler
-        self.manager._last_answer_correct = False
-
-    # ------------------------ Commands --------------------------------
-
-    def _dispatch_command(self, message: str, username: str) -> Optional[str]:
-        msg = message.strip()
-        key = msg.lower()
-
-        # Fast exact matches first
-        if key in self._commands:
-            return self._commands[key](message, username)
-
-        # Prefix match for commands that take args (e.g., !answer ...)
-        if key.startswith("!answer"):
-            return self._commands["!answer"](message, username)
-        
-        if key.startswith("!ask"):
-            return self._commands["!ask"](message, username)
-        
-        if key.startswith("!chat"):
-            return self._commands["!chat"](message, username)
-
-        return None
-    def _current_mcq_answers(self) -> list[str]:
-        """Return current MCQ answers if available, else []."""
-        
-        getq = getattr(self.api_handler, "get_question", None)
-        if callable(getq):
-            q = getq()
-            if q and q.get("all_answers"):
-                return list(q["all_answers"])
-        return []
-
-    def _cmd_trivia_help(self, _: str, __: str) -> str:
-        return self.manager.get_help()
-
-    def _cmd_giveup(self, _: str, __: str) -> str:
-        answer = self.manager.end_trivia()
-        if self.auto_trivia:
-            if self.auto_trivia_type == "smite":
-                self._pending_auto_question = "smite"
-            else:
-                self._pending_auto_question = "general"
-        else:
-            self.auto_trivia = False
-            self.auto_trivia_type = None
-        return answer
-
-    def _cmd_end_trivia(self, _: str, __: str) -> str:
-        self.auto_trivia = False
-        self.auto_trivia_type = None
-        return "🛑 Auto trivia ended!"
-
-    
-    
-
-    
-    def _cmd_answer(self, message: str, username: str) -> str:
-        raw = message[len("!answer"):].strip()
-        guess = raw
-
-        
-        if len(raw) >= 1:
-            letter = raw.split()[0].strip().lower()
-            if len(letter) == 1 and "a" <= letter <= "z":
-                answers = self._current_mcq_answers()
-                idx = ord(letter) - ord("a")
-                if 0 <= idx < len(answers):
-                    guess = answers[idx]
-
-        return self.manager.submit_answer(guess, username)
-
-
-    def _cmd_trivia_auto_smite(self, _: str, __: str) -> str:
-        if not self.smite_handler:
-            return "❌ Database not initialized. Please try again."
-        self.auto_trivia, self.auto_trivia_type = True, "smite"
-        # Store as pending since start() is async
-        self._pending_auto_question = "smite"
-        return "🎯 Starting auto Smite trivia mode..."
-
-    def _cmd_trivia_auto(self, _: str, __: str) -> str:
-        if not self.general_handler:
-            return "❌ Database not initialized. Please try again."
-        self.auto_trivia, self.auto_trivia_type = True, "general"
-        # Store as pending since start() is async
-        self._pending_auto_question = "general"
-        return "📚 Starting auto general trivia mode..."
-
-    def _cmd_trivia_smite(self, _: str, __: str) -> str:
-        if not self.smite_handler:
-            return "❌ Database not initialized. Please try again."
-        self.auto_trivia = False
-        self.auto_trivia_type = None
-        # Store as pending since start() is async
-        self._pending_auto_question = "smite_single"
-        return "🎯 Loading Smite trivia question..."
-
-    def _cmd_trivia(self, _: str, __: str) -> str:
-        if not self.general_handler:
-            return "❌ Database not initialized. Please try again."
-        self.auto_trivia = False
-        self.auto_trivia_type = None
-        # Store as pending since start() is async
-        self._pending_auto_question = "general_single"
-        return "📚 Loading general trivia question..."
-
-    def _cmd_ask(self, message: str, username: str) -> Optional[str]:
-        # Extract the question from the message (remove "!ask " prefix)
-        question = message[4:].strip() if len(message) > 4 else ""
-        if not question:
-            return "❌ Please provide a question after !ask"
-        
-        # Queue the async chat API call
-        asyncio.create_task(self._handle_chat_request(question, username))
-        return None  # Don't send immediate response, wait for async result
-
-    def _cmd_chat(self, message: str, username: str) -> Optional[str]:
-        # Extract the question from the message (remove "!chat " prefix)
-        question = message[6:].strip() if len(message) > 6 else ""
-        if not question:
-            return "❌ Please provide a question after !chat"
-        
-        # Queue the async chat API call
-        asyncio.create_task(self._handle_chat_request(question, username))
-        return None  # Don't send immediate response, wait for async result
-
-    async def _handle_chat_request(self, question: str, username: str) -> None:
-        """Handle async chat API request and send response to chat"""
-        try:
-            async with aiohttp.ClientSession() as session:
-                payload = {
-                    "message": question,
-                    "search_mode": "hybrid",
-                    "n_results": 3
-                }
-                async with session.post(
-                    "http://localhost:8000/chat",
-                    json=payload,
-                    headers={"Content-Type": "application/json"},
-                    timeout=aiohttp.ClientTimeout(total=10)
-                ) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        # Extract the response text from the API response
-                        raw_answer = data.get("response", "No response received")
-                        # Strip markdown formatting for Twitch chat compatibility
-                        answer = strip_markdown(raw_answer)
-                        await self._send(f"@{username} {answer}")
-                    else:
-                        await self._send(f"@{username} ❌ API error: {response.status}")
-        except aiohttp.ClientError as e:
-            LOG.error(f"Chat API request failed: {e}")
-            await self._send(f"@{username} ❌ Failed to connect to chat API")
-        except Exception as e:
-            LOG.error(f"Unexpected error in chat request: {e}")
-            await self._send(f"@{username} ❌ An error occurred")
-
-    # ------------------------ Outbound IRC ----------------------------
-
-    async def _send(self, message: str) -> None:
-        if not self._ws:
-            return
-        # simple token-bucket window
-        now = time.time()
-        window_start = now - self.settings.window_seconds
-        self._sent_timestamps = [t for t in self._sent_timestamps if t >= window_start]
-        if len(self._sent_timestamps) >= self.settings.burst:
-            sleep_for = self._sent_timestamps[0] + self.settings.window_seconds - now
-            await asyncio.sleep(max(0.0, sleep_for))
-        payload = f"PRIVMSG #{self.settings.channel} :{clamp_chat(message.strip(), self.settings.max_msg_len)}"
-        LOG.debug(">> %s", payload[:80])
-        await self._ws.send(payload)
-        self._sent_timestamps.append(time.time())
-
-
-# --------------------------- Entrypoint -------------------------------
+# ======================== ENTRY POINT ========================
 
 if __name__ == "__main__":
     try:
         asyncio.run(IRCClient().run())
     except KeyboardInterrupt:
-        LOG.info("Shutting down…")
+        LOG.info("Shutting down...")
+    except Exception as e:
+        LOG.error(f"Fatal error: {e}")
+        raise

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Union, List, Dict
+from typing import Optional, Union, List, Dict, Tuple
 
 class TriviaBase(ABC):
     @abstractmethod
@@ -8,8 +8,10 @@ class TriviaBase(ABC):
         pass
 
     @abstractmethod
-    def check_answer(self, answer: str, username: Optional[str] = None) -> str:
-        """Checks the answer and returns a response string."""
+    async def check_answer(self, answer: str, username: Optional[str] = None, 
+                          user_id: Optional[int] = None, channel_id: Optional[int] = None, 
+                          session_id: Optional[int] = None) -> Tuple[bool, str]:
+        """Checks the answer and returns (is_correct: bool, response_message: str)."""
         pass
 
     @abstractmethod

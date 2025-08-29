@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}{{ channel_name | title }} Leaderboard{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/overlay.css">
+<style>
+    .leaderboard-container {
+        padding: 20px;
+        min-width: 400px;
+        max-width: 600px;
+    }
+    
+    .leaderboard-header {
+        text-align: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 3px solid;
+        border-image: linear-gradient(90deg, 
+            transparent 0%,
+            #ff6b6b 20%,
+            #dc267f 50%,
+            #ff6b6b 80%,
+            transparent 100%) 1;
+        position: relative;
+    }
+    
+    .leaderboard-header::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #ff6b6b, #dc267f);
+        border-radius: 2px;
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+    }
+    
+    .leaderboard-title {
+        font-size: 28px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ff6b6b 0%, #dc267f 50%, #ff6b6b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 6px;
+        text-shadow: none;
+        position: relative;
+    }
+    
+    .leaderboard-subtitle {
+        font-size: 14px;
+        color: #cccccc;
+    }
+    
+    .leaderboard-entries {
+        list-style: none;
+    }
+    
+    .leaderboard-entry {
+        display: flex;
+        align-items: center;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg,
+            rgba(255, 107, 107, 0.08) 0%,
+            rgba(255, 255, 255, 0.03) 50%,
+            rgba(78, 205, 196, 0.08) 100%);
+        border-radius: 12px;
+        border-left: 4px solid;
+        border-image: linear-gradient(45deg, 
+            #4ecdc4 0%, 
+            #ff6b6b 100%) 1;
+        backdrop-filter: blur(8px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    
+    .leaderboard-entry:hover {
+        background: linear-gradient(135deg,
+            rgba(255, 107, 107, 0.15) 0%,
+            rgba(255, 255, 255, 0.08) 50%,
+            rgba(78, 205, 196, 0.15) 100%);
+        transform: translateX(8px) scale(1.02);
+        box-shadow: 
+            0 8px 25px rgba(0, 0, 0, 0.3),
+            0 0 20px rgba(255, 107, 107, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    
+    .entry-rank {
+        font-size: 20px;
+        font-weight: 900;
+        color: #4ecdc4;
+        width: 50px;
+        text-align: center;
+        background: linear-gradient(135deg, #4ecdc4, #45b7b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        position: relative;
+    }
+    
+    .entry-rank.rank-1 { 
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+    .entry-rank.rank-2 { 
+        background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(192, 192, 192, 0.3);
+    }
+    .entry-rank.rank-3 { 
+        background: linear-gradient(135deg, #cd7f32, #ff9500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(205, 127, 50, 0.3);
+    }
+    
+    .entry-details {
+        flex-grow: 1;
+        margin-left: 15px;
+    }
+    
+    .entry-username {
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        letter-spacing: 0.5px;
+    }
+    
+    .entry-stats {
+        font-size: 13px;
+        color: #e0e6ed;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    .entry-accuracy {
+        font-weight: 600;
+        background: linear-gradient(135deg, #4ecdc4, #45b7b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background-color: rgba(78, 205, 196, 0.1);
+        -webkit-text-fill-color: #4ecdc4;
+    }
+    
+    .entry-streak {
+        background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        margin-left: 12px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background-color: rgba(255, 107, 107, 0.1);
+        -webkit-text-fill-color: #ff9f43;
+        font-weight: 600;
+    }
+    
+    .empty-message {
+        text-align: center;
+        padding: 40px 20px;
+        color: #888888;
+        font-style: italic;
+    }
+    
+    .refresh-indicator {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 11px;
+        color: #999999;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 8px;
+        border-radius: 6px;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Add breathing animation to leaderboard entries */
+    @keyframes breathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.005); }
+    }
+    
+    .leaderboard-entry:nth-child(1) { animation: breathe 6s infinite ease-in-out; }
+    .leaderboard-entry:nth-child(2) { animation: breathe 6s infinite ease-in-out 0.5s; }
+    .leaderboard-entry:nth-child(3) { animation: breathe 6s infinite ease-in-out 1s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="overlay-container leaderboard-container fade-in">
+    <div class="refresh-indicator">
+        Auto-refresh: {{ config.refresh_interval }}s
+    </div>
+    
+    <div class="leaderboard-header">
+        <div class="leaderboard-title text-shadow">
+            🏆 TOP {{ leaderboard.users | length }}
+        </div>
+        <div class="leaderboard-subtitle text-shadow">
+            #{{ channel_name }}
+        </div>
+    </div>
+    
+    {% if leaderboard.users %}
+        <ol class="leaderboard-entries">
+            {% for user in leaderboard.users %}
+            <li class="leaderboard-entry fade-in" style="animation-delay: {{ loop.index * 0.1 }}s">
+                <div class="entry-rank rank-{{ user.rank }}">
+                    {% if user.rank == 1 %}🥇
+                    {% elif user.rank == 2 %}🥈
+                    {% elif user.rank == 3 %}🥉
+                    {% else %}{{ user.rank }}
+                    {% endif %}
+                </div>
+                
+                <div class="entry-details">
+                    <div class="entry-username text-shadow">
+                        {{ user.twitch_username }}
+                    </div>
+                    <div class="entry-stats">
+                        {{ user.correct_answers }}/{{ user.total_questions }} correct
+                        <span class="entry-accuracy">({{ "{:.1f}".format(user.accuracy_pct) }}%)</span>
+                        {% if config.show_streaks %}
+                        <span class="entry-streak">🔥 {{ user.current_streak }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <div class="empty-message">
+            📭 No trivia data yet for #{{ channel_name }}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Auto-refresh functionality
+    const refreshInterval = {{ config.refresh_interval * 1000 }};
+    const apiUrl = "{{ api_url }}";
+    
+    async function refreshData() {
+        try {
+            const response = await fetch(apiUrl);
+            if (response.ok) {
+                // For now, just reload the page
+                // In future versions, we could update the DOM dynamically
+                window.location.reload();
+            }
+        } catch (error) {
+            console.log('Refresh failed:', error);
+        }
+    }
+    
+    // Set up auto-refresh
+    setInterval(refreshData, refreshInterval);
+    
+    // Initial load animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const entries = document.querySelectorAll('.leaderboard-entry');
+        entries.forEach((entry, index) => {
+            entry.style.animationDelay = `${index * 0.1}s`;
+        });
+    });
+</script>
+{% endblock %}

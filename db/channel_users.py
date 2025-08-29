@@ -41,8 +41,8 @@ async def update_user_stats(channel_id: int, user_id: int, is_correct: bool):
                 UPDATE channel_users 
                 SET total_questions = total_questions + 1,
                     correct_answers = correct_answers + 1,
-                    streak = streak + 1,
-                    best_streak = GREATEST(best_streak, streak + 1),
+                    current_streak = current_streak + 1,
+                    best_streak = GREATEST(best_streak, current_streak + 1),
                     last_seen = CURRENT_TIMESTAMP
                 WHERE channel_id = $1 AND user_id = $2
             """, channel_id, user_id)
@@ -51,7 +51,7 @@ async def update_user_stats(channel_id: int, user_id: int, is_correct: bool):
             await conn.execute("""
                 UPDATE channel_users 
                 SET total_questions = total_questions + 1,
-                    streak = 0,
+                    current_streak = 0,
                     last_seen = CURRENT_TIMESTAMP
                 WHERE channel_id = $1 AND user_id = $2
             """, channel_id, user_id)
@@ -81,7 +81,7 @@ async def get_top_streaks(channel_id: int, limit: int = 5):
     pool = await Database.get_pool()
     async with pool.acquire() as conn:
         return await conn.fetch("""
-            SELECT u.twitch_username, cu.best_streak, cu.streak as current_streak
+            SELECT u.twitch_username, cu.best_streak, cu.current_streak
             FROM channel_users cu
             JOIN users u ON cu.user_id = u.id
             WHERE cu.channel_id = $1 AND cu.best_streak > 0
@@ -95,7 +95,7 @@ async def reset_user_streak(channel_id: int, user_id: int):
     async with pool.acquire() as conn:
         await conn.execute("""
             UPDATE channel_users 
-            SET streak = 0, last_seen = CURRENT_TIMESTAMP
+            SET current_streak = 0, last_seen = CURRENT_TIMESTAMP
             WHERE channel_id = $1 AND user_id = $2
         """, channel_id, user_id)
 

@@ -1,0 +1,175 @@
+{
+  "bank_name": "smite_ability_generated_20250829_053818_batch3",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the mana cost of Aladdin's Into The Lamp ultimate ability in Smite?",
+      "options": [
+        "100",
+        "125",
+        "150",
+        "175"
+      ],
+      "correct_answer": "125",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_into_the_lamp_god_aladdin",
+        "source_document_name": "Into The Lamp",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:37:45.305035",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the basic attack power range of Amaterasu in Smite?",
+      "options": [
+        "1.80 meters",
+        "1.92 meters",
+        "2.04 meters",
+        "2.16 meters"
+      ],
+      "correct_answer": "1.92 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "easy",
+      "metadata": {
+        "source_document_id": "ability_amaterasu_basic_attack_god_amaterasu",
+        "source_document_name": "Amaterasu Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:37:58.189199",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the debuff duration of Amaterasu's Illuminating Strike in Smite?",
+      "options": [
+        "6 seconds",
+        "8 seconds",
+        "10 seconds",
+        "12 seconds"
+      ],
+      "correct_answer": "6 seconds",
+      "correct_letter": "A",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_illuminating_strike_god_amaterasu",
+        "source_document_name": "Illuminating Strike",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:00.800775",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the maximum Intelligence Shield Health percentage provided by Amaterasu's Divine Presence ability at level 5?",
+      "options": [
+        "4%",
+        "10%",
+        "20%",
+        "30%"
+      ],
+      "correct_answer": "30%",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_divine_presence_god_amaterasu",
+        "source_document_name": "Divine Presence",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:03.855481",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage reduction scaling of Amaterasu's Heavenly Reflection ability in Smite?",
+      "options": [
+        "5%",
+        "10%",
+        "15%",
+        "20%"
+      ],
+      "correct_answer": "5%",
+      "correct_letter": "A",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_heavenly_reflection_god_amaterasu",
+        "source_document_name": "Heavenly Reflection",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:06.778722",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the physical damage percentage of Amaterasu's Glorious Charge ability in Smite?",
+      "options": [
+        "50%",
+        "60%",
+        "70%",
+        "80%"
+      ],
+      "correct_answer": "60%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_glorious_charge_god_amaterasu",
+        "source_document_name": "Glorious Charge",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:09.688480",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the stun duration of Amaterasu's Dazzling Offensive ultimate ability in Smite?",
+      "options": [
+        "1 second",
+        "1.2 seconds",
+        "1.5 seconds",
+        "2 seconds"
+      ],
+      "correct_answer": "1.2 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_dazzling_offensive_god_amaterasu",
+        "source_document_name": "Dazzling Offensive",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:12.847017",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the basic attack power range of Anhur in Smite?",
+      "options": [
+        "8.7 meters",
+        "8.8 meters",
+        "9.0 meters",
+        "9.2 meters"
+      ],
+      "correct_answer": "8.8 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_anhur_basic_attack_god_anhur",
+        "source_document_name": "Anhur Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:18.832668",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "bank_name": "smite_ability_generated_20250829_054019_batch6",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the basic attack power range of Apollo in Smite?",
+      "options": [
+        "8.7 meters",
+        "8.8 meters",
+        "9.0 meters",
+        "9.2 meters"
+      ],
+      "correct_answer": "8.8 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_apollo_basic_attack_god_apollo",
+        "source_document_name": "Apollo Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:49.753840",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the base damage of Apollo's Audacity ability in Smite?",
+      "options": [
+        "50",
+        "60",
+        "70",
+        "80"
+      ],
+      "correct_answer": "60",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_audacity_god_apollo",
+        "source_document_name": "Audacity",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:52.093062",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage scaling of Apollo's 'So Beautiful' ability in Smite?",
+      "options": [
+        "80%",
+        "90%",
+        "100%",
+        "110%"
+      ],
+      "correct_answer": "90%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_so_beautiful_god_apollo",
+        "source_document_name": "So Beautiful",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:55.089225",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown duration of Apollo's Serenade ability in Smite?",
+      "options": [
+        "12 seconds",
+        "15 seconds",
+        "18 seconds",
+        "20 seconds"
+      ],
+      "correct_answer": "15 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_serenade_god_apollo",
+        "source_document_name": "Serenade",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:58.002134",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown of Apollo's 3rd ability in Smite?",
+      "options": [
+        "14 seconds",
+        "15 seconds",
+        "16 seconds",
+        "17 seconds"
+      ],
+      "correct_answer": "15 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_the_moves_god_apollo",
+        "source_document_name": "The Moves",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:40:05.050616",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown of Apollo's 'Across the Sky' ultimate ability in Smite?",
+      "options": [
+        "100 seconds",
+        "110 seconds",
+        "120 seconds",
+        "130 seconds"
+      ],
+      "correct_answer": "110 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_across_the_sky_god_apollo",
+        "source_document_name": "Across the Sky",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:40:08.202343",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the basic attack power range of Ares in Smite?",
+      "options": [
+        "1.92 meters",
+        "2.04 meters",
+        "2.16 meters",
+        "2.28 meters"
+      ],
+      "correct_answer": "1.92 meters",
+      "correct_letter": "A",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_ares_basic_attack_god_ares",
+        "source_document_name": "Ares Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:40:13.826472",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the percentage increase in Strength provided by Blessed Armaments (Ares) per level?",
+      "options": [
+        "7%",
+        "8%",
+        "9%",
+        "10%"
+      ],
+      "correct_answer": "8%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_blessed_armaments_god_ares",
+        "source_document_name": "Blessed Armaments",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:40:16.364094",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the initial damage of Ares' Shackles ability at its highest level?",
+      "options": [
+        "60",
+        "75",
+        "90",
+        "105"
+      ],
+      "correct_answer": "90",
+      "correct_letter": "C",
+      "type": "multiple_choice",
+      "category": "Smite Abilities",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_shackles_god_ares",
+        "source_document_name": "Shackles",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:40:19.227616",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}

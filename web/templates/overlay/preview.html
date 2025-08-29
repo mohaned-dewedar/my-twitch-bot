@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}{{ channel_name | title }} Overlay Preview{% endblock %}
+
+{% block extra_head %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        overflow: auto;
+    }
+    
+    .preview-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .preview-header {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .preview-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    
+    .preview-info {
+        color: #cccccc;
+        font-size: 14px;
+    }
+    
+    .overlay-preview {
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .controls {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    
+    .controls h3 {
+        margin-bottom: 15px;
+        color: #ff6b6b;
+    }
+    
+    .control-group {
+        margin-bottom: 15px;
+    }
+    
+    .control-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    
+    .url-box {
+        background: #2d3748;
+        border: 1px solid #4a5568;
+        padding: 10px;
+        border-radius: 4px;
+        color: #e2e8f0;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        word-break: break-all;
+        cursor: text;
+    }
+    
+    .button {
+        background: #4ecdc4;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-right: 10px;
+        margin-top: 10px;
+    }
+    
+    .button:hover {
+        background: #45b7b8;
+    }
+    
+    /* Include the same styles as the actual overlay */
+    .leaderboard-container {
+        padding: 20px;
+        min-width: 400px;
+        max-width: 600px;
+    }
+    
+    .leaderboard-header {
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ff6b6b;
+        padding-bottom: 10px;
+    }
+    
+    .leaderboard-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ff6b6b;
+        margin-bottom: 5px;
+    }
+    
+    .leaderboard-subtitle {
+        font-size: 14px;
+        color: #cccccc;
+    }
+    
+    .leaderboard-entries {
+        list-style: none;
+    }
+    
+    .leaderboard-entry {
+        display: flex;
+        align-items: center;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg,
+            rgba(255, 107, 107, 0.08) 0%,
+            rgba(255, 255, 255, 0.03) 50%,
+            rgba(78, 205, 196, 0.08) 100%);
+        border-radius: 12px;
+        border-left: 4px solid;
+        border-image: linear-gradient(45deg, 
+            #4ecdc4 0%, 
+            #ff6b6b 100%) 1;
+        backdrop-filter: blur(8px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    
+    .entry-rank {
+        font-size: 20px;
+        font-weight: 900;
+        color: #4ecdc4;
+        width: 50px;
+        text-align: center;
+        background: linear-gradient(135deg, #4ecdc4, #45b7b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        position: relative;
+    }
+    
+    .entry-rank.rank-1 { 
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+    .entry-rank.rank-2 { 
+        background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(192, 192, 192, 0.3);
+    }
+    .entry-rank.rank-3 { 
+        background: linear-gradient(135deg, #cd7f32, #ff9500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(205, 127, 50, 0.3);
+    }
+    
+    .entry-details {
+        flex-grow: 1;
+        margin-left: 15px;
+    }
+    
+    .entry-username {
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        letter-spacing: 0.5px;
+    }
+    
+    .entry-stats {
+        font-size: 13px;
+        color: #e0e6ed;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    .entry-accuracy {
+        font-weight: 600;
+        background: linear-gradient(135deg, #4ecdc4, #45b7b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background-color: rgba(78, 205, 196, 0.1);
+        -webkit-text-fill-color: #4ecdc4;
+    }
+    
+    .entry-streak {
+        background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        margin-left: 12px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background-color: rgba(255, 107, 107, 0.1);
+        -webkit-text-fill-color: #ff9f43;
+        font-weight: 600;
+    }
+    
+    .empty-message {
+        text-align: center;
+        padding: 40px 20px;
+        color: #888888;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="preview-container">
+    <div class="preview-header">
+        <div class="preview-title">🎬 CherryBott Overlay Preview</div>
+        <div class="preview-info">
+            Preview your overlay before adding to OBS
+        </div>
+    </div>
+    
+    <div class="overlay-preview">
+        <div class="overlay-container leaderboard-container">
+            <div class="leaderboard-header">
+                <div class="leaderboard-title text-shadow">
+                    🏆 TOP {{ leaderboard.users | length }}
+                </div>
+                <div class="leaderboard-subtitle text-shadow">
+                    #{{ channel_name }}
+                </div>
+            </div>
+            
+            {% if leaderboard.users %}
+                <ol class="leaderboard-entries">
+                    {% for user in leaderboard.users %}
+                    <li class="leaderboard-entry">
+                        <div class="entry-rank rank-{{ user.rank }}">
+                            {% if user.rank == 1 %}🥇
+                            {% elif user.rank == 2 %}🥈
+                            {% elif user.rank == 3 %}🥉
+                            {% else %}{{ user.rank }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="entry-details">
+                            <div class="entry-username text-shadow">
+                                {{ user.twitch_username }}
+                            </div>
+                            <div class="entry-stats">
+                                {{ user.correct_answers }}/{{ user.total_questions }} correct
+                                <span class="entry-accuracy">({{ "{:.1f}".format(user.accuracy_pct) }}%)</span>
+                                <span class="entry-streak">🔥 {{ user.current_streak }}</span>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                <div class="empty-message">
+                    📭 No trivia data yet for #{{ channel_name }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="controls">
+        <h3>🎮 OBS Setup Instructions</h3>
+        
+        <div class="control-group">
+            <label>1. Copy this URL for OBS Browser Source:</label>
+            <div class="url-box" onclick="selectText(this)">{{ request.url.scheme }}://{{ request.url.netloc }}{{ overlay_url }}</div>
+            <button class="button" onclick="copyToClipboard('{{ request.url.scheme }}://{{ request.url.netloc }}{{ overlay_url }}')">Copy URL</button>
+        </div>
+        
+        <div class="control-group">
+            <label>2. In OBS, add Browser Source with these settings:</label>
+            <ul style="margin-left: 20px; color: #cccccc;">
+                <li>Width: 600px, Height: 400px (or adjust to fit)</li>
+                <li>Custom CSS: Not required</li>
+                <li>Shutdown source when not visible: ✓</li>
+                <li>Refresh browser when scene becomes active: ✓</li>
+            </ul>
+        </div>
+        
+        <div class="control-group">
+            <label>3. Available Options:</label>
+            <ul style="margin-left: 20px; color: #cccccc;">
+                <li>Add <code>?compact=true</code> for compact mode</li>
+                <li>Add <code>&limit=10</code> to show more entries</li>
+                <li>Add <code>&refresh=30</code> to change refresh rate</li>
+            </ul>
+        </div>
+        
+        <button class="button" onclick="window.location.reload()">🔄 Refresh Preview</button>
+        <button class="button" onclick="window.open('{{ overlay_url }}', '_blank')">🎯 Open Overlay</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function selectText(element) {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+    
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('URL copied to clipboard!');
+        }).catch(() => {
+            alert('Failed to copy URL. Please copy manually.');
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,154 @@
+{
+  "bank_name": "smite_ability_generated_20250829_054159_batch8",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the basic attack power range of Athena's Basic Attack in Smite?",
+      "options": [
+        "1.8 meters",
+        "1.92 meters",
+        "2.04 meters",
+        "2.16 meters"
+      ],
+      "correct_answer": "1.92 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_athena_basic_attack_god_athena",
+        "source_document_name": "Athena Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:41:22.088155",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the strength range of Athena's passive ability 'Reach' in Smite?",
+      "options": [
+        "8.0 meters",
+        "8.8 meters",
+        "9.2 meters",
+        "10.0 meters"
+      ],
+      "correct_answer": "8.8 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_reach_god_athena",
+        "source_document_name": "Reach",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:41:24.888807",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage scaling percentage of Athena's Preemptive Strike at its highest level?",
+      "options": [
+        "50%",
+        "60%",
+        "70%",
+        "55%"
+      ],
+      "correct_answer": "55%",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_preemptive_strike_god_athena",
+        "source_document_name": "Preemptive Strike",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:41:27.983530",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the intelligence taunt duration of Athena's Confound ability at its maximum level?",
+      "options": [
+        "0.75 seconds",
+        "0.9 seconds",
+        "1.2 seconds",
+        "1.35 seconds"
+      ],
+      "correct_answer": "1.35 seconds",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_confound_god_athena",
+        "source_document_name": "Confound",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:41:37.053579",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the final damage scaling of Athena's Shield Wall ability at intelligence level 5?",
+      "options": [
+        "40%",
+        "50%",
+        "55%",
+        "60%"
+      ],
+      "correct_answer": "55%",
+      "correct_letter": "C",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_shield_wall_god_athena",
+        "source_document_name": "Shield Wall",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:41:40.180313",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the maximum Health Shield provided by Athena's Defender of Olympus ultimate ability at its highest level?",
+      "options": [
+        "200",
+        "250",
+        "300",
+        "350"
+      ],
+      "correct_answer": "250",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_defender_of_olympus_god_athena",
+        "source_document_name": "Defender of Olympus",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:41:43.725267",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the duration extension of Awilix's Initiative passive ability when triggered?",
+      "options": [
+        "3 seconds",
+        "2 seconds",
+        "4 seconds",
+        "1 second"
+      ],
+      "correct_answer": "2 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_initiative_god_awilix",
+        "source_document_name": "Initiative",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:41:59.673665",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}
