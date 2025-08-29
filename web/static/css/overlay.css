@@ -18,11 +18,23 @@ body {
 
 /* Container styles */
 .overlay-container {
-    background: rgba(0, 0, 0, 0.85);
-    border-radius: 12px;
-    backdrop-filter: blur(8px);
-    border: 2px solid rgba(255, 107, 107, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, 
+        rgba(220, 38, 127, 0.1) 0%,
+        rgba(255, 107, 107, 0.1) 25%,
+        rgba(68, 68, 68, 0.1) 50%,
+        rgba(34, 34, 34, 0.2) 100%),
+        rgba(26, 28, 36, 0.85);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    border: 2px solid;
+    border-image: linear-gradient(135deg, 
+        rgba(255, 107, 107, 0.6) 0%, 
+        rgba(220, 38, 127, 0.4) 50%,
+        rgba(255, 107, 107, 0.6) 100%) 1;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(255, 107, 107, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
     position: relative;
 }
 
@@ -63,7 +75,10 @@ body {
 }
 
 .text-glow {
-    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    text-shadow: 
+        0 0 10px rgba(255, 107, 107, 0.8),
+        0 0 20px rgba(255, 107, 107, 0.4),
+        0 0 40px rgba(255, 107, 107, 0.2);
 }
 
 /* Theme variations */
@@ -80,10 +95,20 @@ body {
 
 .theme-gaming {
     background: linear-gradient(135deg, 
-        rgba(255, 107, 107, 0.1) 0%, 
-        rgba(78, 205, 196, 0.1) 100%),
-        rgba(0, 0, 0, 0.8);
-    border: 2px solid rgba(78, 205, 196, 0.4);
+        rgba(255, 107, 107, 0.15) 0%,
+        rgba(220, 38, 127, 0.1) 25%,
+        rgba(78, 205, 196, 0.1) 75%,
+        rgba(40, 44, 52, 0.2) 100%),
+        rgba(18, 20, 24, 0.9);
+    border: 2px solid;
+    border-image: linear-gradient(135deg, 
+        rgba(255, 107, 107, 0.8) 0%, 
+        rgba(78, 205, 196, 0.6) 50%,
+        rgba(255, 107, 107, 0.8) 100%) 1;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 107, 107, 0.15),
+        0 0 60px rgba(78, 205, 196, 0.1);
 }
 
 /* Responsive design for different overlay sizes */

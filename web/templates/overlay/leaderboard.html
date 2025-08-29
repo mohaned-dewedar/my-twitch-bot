@@ -13,16 +13,41 @@
     
     .leaderboard-header {
         text-align: center;
-        margin-bottom: 20px;
-        border-bottom: 2px solid #ff6b6b;
-        padding-bottom: 10px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 3px solid;
+        border-image: linear-gradient(90deg, 
+            transparent 0%,
+            #ff6b6b 20%,
+            #dc267f 50%,
+            #ff6b6b 80%,
+            transparent 100%) 1;
+        position: relative;
+    }
+    
+    .leaderboard-header::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #ff6b6b, #dc267f);
+        border-radius: 2px;
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
     }
     
     .leaderboard-title {
-        font-size: 24px;
-        font-weight: bold;
-        color: #ff6b6b;
-        margin-bottom: 5px;
+        font-size: 28px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ff6b6b 0%, #dc267f 50%, #ff6b6b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 6px;
+        text-shadow: none;
+        position: relative;
     }
     
     .leaderboard-subtitle {
@@ -37,30 +62,71 @@
     .leaderboard-entry {
         display: flex;
         align-items: center;
-        padding: 12px 16px;
-        margin-bottom: 8px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 6px;
-        border-left: 4px solid #4ecdc4;
-        transition: all 0.3s ease;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg,
+            rgba(255, 107, 107, 0.08) 0%,
+            rgba(255, 255, 255, 0.03) 50%,
+            rgba(78, 205, 196, 0.08) 100%);
+        border-radius: 12px;
+        border-left: 4px solid;
+        border-image: linear-gradient(45deg, 
+            #4ecdc4 0%, 
+            #ff6b6b 100%) 1;
+        backdrop-filter: blur(8px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
     
     .leaderboard-entry:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateX(5px);
+        background: linear-gradient(135deg,
+            rgba(255, 107, 107, 0.15) 0%,
+            rgba(255, 255, 255, 0.08) 50%,
+            rgba(78, 205, 196, 0.15) 100%);
+        transform: translateX(8px) scale(1.02);
+        box-shadow: 
+            0 8px 25px rgba(0, 0, 0, 0.3),
+            0 0 20px rgba(255, 107, 107, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
     
     .entry-rank {
-        font-size: 18px;
-        font-weight: bold;
+        font-size: 20px;
+        font-weight: 900;
         color: #4ecdc4;
-        width: 40px;
+        width: 50px;
         text-align: center;
+        background: linear-gradient(135deg, #4ecdc4, #45b7b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        position: relative;
     }
     
-    .entry-rank.rank-1 { color: #ffd700; }
-    .entry-rank.rank-2 { color: #c0c0c0; }
-    .entry-rank.rank-3 { color: #cd7f32; }
+    .entry-rank.rank-1 { 
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+    .entry-rank.rank-2 { 
+        background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(192, 192, 192, 0.3);
+    }
+    .entry-rank.rank-3 { 
+        background: linear-gradient(135deg, #cd7f32, #ff9500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 10px rgba(205, 127, 50, 0.3);
+    }
     
     .entry-details {
         flex-grow: 1;
@@ -68,25 +134,46 @@
     }
     
     .entry-username {
-        font-size: 16px;
-        font-weight: 600;
+        font-size: 18px;
+        font-weight: 700;
         color: #ffffff;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        letter-spacing: 0.5px;
     }
     
     .entry-stats {
-        font-size: 12px;
-        color: #cccccc;
+        font-size: 13px;
+        color: #e0e6ed;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
     
     .entry-accuracy {
-        font-weight: 500;
-        color: #4ecdc4;
+        font-weight: 600;
+        background: linear-gradient(135deg, #4ecdc4, #45b7b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background-color: rgba(78, 205, 196, 0.1);
+        -webkit-text-fill-color: #4ecdc4;
     }
     
     .entry-streak {
-        color: #ff9f43;
-        margin-left: 10px;
+        background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        margin-left: 12px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background-color: rgba(255, 107, 107, 0.1);
+        -webkit-text-fill-color: #ff9f43;
+        font-weight: 600;
     }
     
     .empty-message {
@@ -98,11 +185,26 @@
     
     .refresh-indicator {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 12px;
-        color: #666666;
+        top: 12px;
+        right: 12px;
+        font-size: 11px;
+        color: #999999;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 8px;
+        border-radius: 6px;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
+    
+    /* Add breathing animation to leaderboard entries */
+    @keyframes breathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.005); }
+    }
+    
+    .leaderboard-entry:nth-child(1) { animation: breathe 6s infinite ease-in-out; }
+    .leaderboard-entry:nth-child(2) { animation: breathe 6s infinite ease-in-out 0.5s; }
+    .leaderboard-entry:nth-child(3) { animation: breathe 6s infinite ease-in-out 1s; }
 </style>
 {% endblock %}
 
