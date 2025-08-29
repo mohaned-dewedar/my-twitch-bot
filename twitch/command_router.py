@@ -5,13 +5,15 @@ Handles registration and dispatch of chat commands to their respective handlers.
 Supports both exact command matches and prefix-based commands with arguments.
 """
 
-from typing import Callable, Dict, Optional, Protocol
+from typing import Callable, Dict, Optional, Protocol, Union, Awaitable
+import asyncio
+import inspect
 
 
 class CommandHandler(Protocol):
     """Protocol for command handler functions."""
-    def __call__(self, message: str, username: str) -> Optional[str]:
-        """Handle a command and return response or None."""
+    def __call__(self, message: str, username: str) -> Union[Optional[str], Awaitable[Optional[str]]]:
+        """Handle a command and return response or None (sync or async)."""
         ...
 
 
@@ -58,7 +60,7 @@ class CommandRouter:
         for command, handler in command_map.items():
             self.register_exact_command(command, handler)
     
-    def dispatch_command(self, message: str, username: str) -> Optional[str]:
+    async def dispatch_command(self, message: str, username: str) -> Optional[str]:
         """
         Route a message to the appropriate command handler.
         
@@ -74,12 +76,21 @@ class CommandRouter:
         
         # Try exact command matches first
         if message_lower in self._exact_commands:
-            return self._exact_commands[message_lower](message, username)
+            handler = self._exact_commands[message_lower]
+            result = handler(message, username)
+            # Handle both sync and async handlers
+            if inspect.iscoroutine(result):
+                return await result
+            return result
         
         # Try prefix matches for commands with arguments
         for prefix, handler in self._prefix_commands.items():
             if message_lower.startswith(prefix):
-                return handler(message, username)
+                result = handler(message, username)
+                # Handle both sync and async handlers
+                if inspect.iscoroutine(result):
+                    return await result
+                return result
         
         # No matching command found
         return None

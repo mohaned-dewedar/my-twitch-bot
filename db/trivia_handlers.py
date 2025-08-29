@@ -8,6 +8,10 @@ import json
 from typing import Optional, Dict, List, Tuple
 from trivia.base import TriviaBase
 from db.database import Database
+from db.attempts import create_attempt
+import logging
+
+LOG = logging.getLogger(__name__)
 
 
 class DatabaseTriviaHandler(TriviaBase):
@@ -156,7 +160,9 @@ class GeneralTriviaHandler(DatabaseTriviaHandler):
         else:
             return f"📚 {self._current_question['question']}"
     
-    def check_answer(self, answer: str, username: Optional[str] = None) -> Tuple[bool, str]:
+    async def check_answer(self, answer: str, username: Optional[str] = None, 
+                          user_id: Optional[int] = None, channel_id: Optional[int] = None, 
+                          session_id: Optional[int] = None) -> Tuple[bool, str]:
         if not self._active or not self._current_question:
             return (False, "❌ No active trivia.")
         
@@ -173,6 +179,22 @@ class GeneralTriviaHandler(DatabaseTriviaHandler):
                         answer.strip().lower() == correct_answer.lower()
         else:  # open_ended
             is_correct = answer.strip().lower() == correct_answer.strip().lower()
+        
+        # Record attempt in database if we have all the required info
+        if user_id is not None and channel_id is not None and session_id is not None:
+            try:
+                await create_attempt(
+                    session_id=session_id,
+                    question_id=self._current_question['id'],
+                    user_id=user_id,
+                    channel_id=channel_id,
+                    user_answer=answer,
+                    is_correct=is_correct
+                )
+                LOG.info(f"Recorded attempt: user_id={user_id}, question_id={self._current_question['id']}, correct={is_correct}")
+            except Exception as e:
+                LOG.error(f"Failed to record attempt in database: {e}")
+                # Continue with trivia even if database fails
         
         if is_correct:
             self._active = False
@@ -255,7 +277,9 @@ class SmiteTriviaHandler(DatabaseTriviaHandler):
             # Legacy open-ended format (god ability questions)
             return f"🎯 SMITE TRIVIA! {self._current_question['question']} Type !answer GodName to answer!"
     
-    def check_answer(self, answer: str, username: Optional[str] = None) -> Tuple[bool, str]:
+    async def check_answer(self, answer: str, username: Optional[str] = None, 
+                          user_id: Optional[int] = None, channel_id: Optional[int] = None, 
+                          session_id: Optional[int] = None) -> Tuple[bool, str]:
         if not self._active or not self._current_question:
             return (False, "❌ No active trivia.")
         
@@ -271,6 +295,22 @@ class SmiteTriviaHandler(DatabaseTriviaHandler):
         else:
             # Legacy open-ended format - Smite god names are case-insensitive
             is_correct = answer.strip().lower() == correct_answer.strip().lower()
+        
+        # Record attempt in database if we have all the required info
+        if user_id is not None and channel_id is not None and session_id is not None:
+            try:
+                await create_attempt(
+                    session_id=session_id,
+                    question_id=self._current_question['id'],
+                    user_id=user_id,
+                    channel_id=channel_id,
+                    user_answer=answer,
+                    is_correct=is_correct
+                )
+                LOG.info(f"Recorded Smite attempt: user_id={user_id}, question_id={self._current_question['id']}, correct={is_correct}")
+            except Exception as e:
+                LOG.error(f"Failed to record Smite attempt in database: {e}")
+                # Continue with trivia even if database fails
         
         if is_correct:
             self._active = False

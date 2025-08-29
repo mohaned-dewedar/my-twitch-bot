@@ -8,7 +8,9 @@ class TriviaBase(ABC):
         pass
 
     @abstractmethod
-    def check_answer(self, answer: str, username: Optional[str] = None) -> Tuple[bool, str]:
+    async def check_answer(self, answer: str, username: Optional[str] = None, 
+                          user_id: Optional[int] = None, channel_id: Optional[int] = None, 
+                          session_id: Optional[int] = None) -> Tuple[bool, str]:
         """Checks the answer and returns (is_correct: bool, response_message: str)."""
         pass
 

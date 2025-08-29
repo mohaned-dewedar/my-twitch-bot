@@ -7,10 +7,10 @@ async def get_leaderboard(channel_id: int, limit: int = 10):
         return await conn.fetch("""
             SELECT u.twitch_username, cu.correct_answers, cu.total_questions,
                    CASE WHEN cu.total_questions > 0 
-                        THEN ROUND((cu.correct_answers::float / cu.total_questions::float) * 100, 1) 
+                        THEN ROUND(CAST((cu.correct_answers::float / cu.total_questions::float) * 100 AS numeric), 1) 
                         ELSE 0 
                    END as accuracy_pct,
-                   cu.best_streak, cu.streak as current_streak
+                   cu.best_streak, cu.current_streak
             FROM channel_users cu
             JOIN users u ON cu.user_id = u.id
             WHERE cu.channel_id = $1 AND cu.total_questions > 0
@@ -27,7 +27,7 @@ async def get_leaderboard_direct(channel_id: int, limit: int = 10):
                    COUNT(*) FILTER (WHERE a.is_correct = TRUE) as correct_answers,
                    COUNT(*) as total_questions,
                    CASE WHEN COUNT(*) > 0 
-                        THEN ROUND((COUNT(*) FILTER (WHERE a.is_correct = TRUE)::float / COUNT(*)::float) * 100, 1) 
+                        THEN ROUND(CAST((COUNT(*) FILTER (WHERE a.is_correct = TRUE)::float / COUNT(*)::float) * 100 AS numeric), 1) 
                         ELSE 0 
                    END as accuracy_pct
             FROM attempts a

@@ -26,6 +26,11 @@ from twitch.message_utils import is_valid_twitch_message
 from db.trivia_handlers import GeneralTriviaHandler, SmiteTriviaHandler
 from trivia.manager import TriviaManager
 
+# Database integration
+from db.users import get_or_create_user
+from db.channels import get_channel_id, add_channel
+from db.sessions import start_session, get_active_session
+
 
 LOG = logging.getLogger(__name__)
 logging.basicConfig(
@@ -73,6 +78,10 @@ class IRCClient:
         self.manager = TriviaManager()
         self.general_handler: Optional[GeneralTriviaHandler] = None
         self.smite_handler: Optional[SmiteTriviaHandler] = None
+        
+        # Database state
+        self.channel_id: Optional[int] = None
+        self.current_session_id: Optional[int] = None
     
     def _setup_components(self) -> None:
         """Initialize and configure all specialized components."""
@@ -155,13 +164,16 @@ class IRCClient:
         await self.connection.message_loop()
     
     async def _init_database_handlers(self) -> None:
-        """Initialize database trivia handlers."""
+        """Initialize database trivia handlers and channel registration."""
         try:
             from config import DATABASE_URL
             from db.database import Database
             
             # Initialize database connection
             db = await Database.init(DATABASE_URL)
+            
+            # Register/get channel in database
+            await self._init_database_channel()
             
             # Create handlers
             self.general_handler = GeneralTriviaHandler(db)
@@ -174,6 +186,27 @@ class IRCClient:
         except Exception as e:
             LOG.error(f"Failed to initialize database handlers: {e}")
             # Handlers remain None - commands will show error messages
+    
+    async def _init_database_channel(self) -> None:
+        """Register the channel in the database and get channel_id."""
+        try:
+            # Try to get existing channel
+            self.channel_id = await get_channel_id(self.settings.channel)
+            
+            if self.channel_id is None:
+                # Create new channel record
+                await add_channel(
+                    twitch_channel_id=self.settings.channel,
+                    name=self.settings.channel
+                )
+                self.channel_id = await get_channel_id(self.settings.channel)
+                LOG.info(f"Created new channel record: {self.settings.channel} -> {self.channel_id}")
+            else:
+                LOG.info(f"Using existing channel: {self.settings.channel} -> {self.channel_id}")
+                
+        except Exception as e:
+            LOG.error(f"Failed to initialize channel in database: {e}")
+            self.channel_id = None
     
     async def _handle_irc_message(self, raw_message: str) -> None:
         """
@@ -191,7 +224,7 @@ class IRCClient:
         message = parsed["message"]
         
         # Route to command handler
-        response = self.command_router.dispatch_command(message, username)
+        response = await self.command_router.dispatch_command(message, username)
         if response:
             await self._send_message(response)
         
@@ -241,7 +274,7 @@ class IRCClient:
         """Handle !end trivia command."""
         return self.trivia_orchestrator.end_trivia_mode()
     
-    def _cmd_answer(self, message: str, username: str) -> str:
+    async def _cmd_answer(self, message: str, username: str) -> str:
         """Handle !answer command with MCQ shortcuts."""
         raw_answer = message[len("!answer"):].strip()
         
@@ -258,7 +291,24 @@ class IRCClient:
                         if 0 <= letter_index < len(options):
                             raw_answer = options[letter_index]
         
-        return self.manager.submit_answer(raw_answer, username)
+        # Get database context for tracking
+        user_id = None
+        session_id = self.current_session_id
+        
+        if self.channel_id is not None:
+            try:
+                user_id = await get_or_create_user(username)
+                # Create session if none exists
+                if session_id is None:
+                    session_id = await start_session(self.channel_id, user_id)
+                    self.current_session_id = session_id
+                    LOG.info(f"Started new trivia session: {session_id}")
+            except Exception as e:
+                LOG.error(f"Failed to get user/session info: {e}")
+        
+        return await self.manager.submit_answer(
+            raw_answer, username, user_id, self.channel_id, session_id
+        )
     
     def _cmd_trivia_auto_smite(self, _: str, __: str) -> str:
         """Handle !trivia auto smite command."""
