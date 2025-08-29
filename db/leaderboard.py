@@ -44,9 +44,9 @@ async def get_user_stats(channel_id: int, user_id: int):
     pool = await Database.get_pool()
     async with pool.acquire() as conn:
         result = await conn.fetchrow("""
-            SELECT cu.correct_answers, cu.total_questions, cu.streak, cu.best_streak,
+            SELECT cu.correct_answers, cu.total_questions, cu.current_streak, cu.best_streak,
                    CASE WHEN cu.total_questions > 0 
-                        THEN ROUND((cu.correct_answers::float / cu.total_questions::float) * 100, 1) 
+                        THEN ROUND(CAST((cu.correct_answers::float / cu.total_questions::float) * 100 AS numeric), 1) 
                         ELSE 0 
                    END as accuracy_pct,
                    cu.first_seen, cu.last_seen

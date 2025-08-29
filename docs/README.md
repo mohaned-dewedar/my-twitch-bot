@@ -2,7 +2,7 @@
 
 **CherryBott** is a Twitch chatbot featuring interactive trivia games and external API chat integration. Originally designed with local LLM support via Ollama, it now focuses on database-driven trivia and external chat API responses for Smite2 and general knowledge questions.
 
-![CherryBott Example Response](example.png)
+![CherryBott Example Response](../examples/example.png)
 ---
 
 ## 🚀 Features
