@@ -1,0 +1,133 @@
+{
+  "bank_name": "smite_ability_generated_20250829_054324_batch10",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the cooldown of Bacchus's Intoxicate ultimate ability in Smite?",
+      "options": [
+        "80 seconds",
+        "95 seconds",
+        "100 seconds",
+        "90 seconds"
+      ],
+      "correct_answer": "90 seconds",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_intoxicate_god_bacchus",
+        "source_document_name": "Intoxicate",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:42:49.309315",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the basic attack power range of Baron Samedi's ability in Smite?",
+      "options": [
+        "8.7 meters",
+        "8.8 meters",
+        "9.0 meters",
+        "9.2 meters"
+      ],
+      "correct_answer": "8.8 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "easy",
+      "metadata": {
+        "source_document_id": "ability_baron_samedi_basic_attack_god_baron_samedi",
+        "source_document_name": "Baron Samedi Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:43:03.447899",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown rate of Baron Samedi's Consign Spirits ability at its maximum level?",
+      "options": [
+        "25%",
+        "30%",
+        "35%",
+        "40%"
+      ],
+      "correct_answer": "35%",
+      "correct_letter": "C",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_consign_spirits_god_baron_samedi",
+        "source_document_name": "Consign Spirits",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:43:11.847826",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the mesmerize duration of Baron Samedi's Wrap It Up ability in Smite?",
+      "options": [
+        "1.25 seconds",
+        "1.75 seconds",
+        "2.0 seconds",
+        "1.5 seconds"
+      ],
+      "correct_answer": "1.75 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_wrap_it_up_god_baron_samedi",
+        "source_document_name": "Wrap It Up",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:43:15.052336",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage scaling percentage of Baron Samedi's Life of the Party ultimate ability?",
+      "options": [
+        "6%",
+        "7%",
+        "8%",
+        "9%"
+      ],
+      "correct_answer": "7%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_life_of_the_party_god_baron_samedi",
+        "source_document_name": "Life of the Party",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:43:17.804321",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the range of Bellona's Basic Attack in Smite?",
+      "options": [
+        "1.5 meters",
+        "1.92 meters",
+        "2.08 meters",
+        "2.56 meters"
+      ],
+      "correct_answer": "1.92 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_bellona_basic_attack_god_bellona",
+        "source_document_name": "Bellona Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:43:24.215618",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}

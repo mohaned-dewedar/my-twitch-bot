@@ -1,0 +1,133 @@
+{
+  "bank_name": "smite_ability_generated_20250829_053002_batch1",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the damage scaling of Shield of Achilles (Achilles) at its maximum level?",
+      "options": [
+        "75%",
+        "80%",
+        "90%",
+        "85%"
+      ],
+      "correct_answer": "80%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_shield_of_achilles_god_achilles",
+        "source_document_name": "Shield of Achilles",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:29:24.730696",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the base healing value of Achilles' Radiant Glory ability at its lowest level?",
+      "options": [
+        "16",
+        "18",
+        "20",
+        "24"
+      ],
+      "correct_answer": "16",
+      "correct_letter": "A",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_radiant_glory_god_achilles",
+        "source_document_name": "Radiant Glory",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:29:33.503900",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage scaling of Achilles' Combat Dodge (Spear Strike) ability in Smite?",
+      "options": [
+        "40%",
+        "45%",
+        "50%",
+        "55%"
+      ],
+      "correct_answer": "45%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_combat_dodge_(spear_strike)_god_achilles",
+        "source_document_name": "Combat Dodge (Spear Strike)",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:29:36.829460",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown duration of Achilles' Fatal Strike ultimate ability in Smite?",
+      "options": [
+        "80 seconds",
+        "90 seconds",
+        "100 seconds",
+        "110 seconds"
+      ],
+      "correct_answer": "90 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_fatal_strike_god_achilles",
+        "source_document_name": "Fatal Strike",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:29:40.067093",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the basic attack power range of Agni in Smite?",
+      "options": [
+        "9 meters",
+        "8.8 meters",
+        "10 meters",
+        "7.5 meters"
+      ],
+      "correct_answer": "8.8 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_agni_basic_attack_god_agni",
+        "source_document_name": "Agni Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:29:54.111467",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the base damage of Agni's Combustion passive in Smite?",
+      "options": [
+        "50",
+        "60",
+        "70",
+        "80"
+      ],
+      "correct_answer": "70",
+      "correct_letter": "C",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_combustion_god_agni",
+        "source_document_name": "Combustion",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:30:02.957416",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}

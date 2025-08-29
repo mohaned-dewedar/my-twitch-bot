@@ -1,0 +1,154 @@
+{
+  "bank_name": "smite_ability_generated_20250829_053945_batch5",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the initial damage of Anubis's Death Gaze ultimate ability in Smite?",
+      "options": [
+        "105",
+        "90",
+        "84",
+        "120"
+      ],
+      "correct_answer": "90",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_death_gaze_god_anubis",
+        "source_document_name": "Death Gaze",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:10.050305",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the basic attack power range of Aphrodite in Smite?",
+      "options": [
+        "9 meters",
+        "8.8 meters",
+        "10 meters",
+        "7.5 meters"
+      ],
+      "correct_answer": "8.8 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_aphrodite_basic_attack_god_aphrodite",
+        "source_document_name": "Aphrodite Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:23.218859",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage reduction percentage provided by Aphrodite's Center of Attention passive ability in Smite?",
+      "options": [
+        "25%",
+        "30%",
+        "40%",
+        "35%"
+      ],
+      "correct_answer": "35%",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_center_of_attention_god_aphrodite",
+        "source_document_name": "Center of Attention",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:26.145473",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the maximum damage increase from Aphrodite's Kiss ability at level 5?",
+      "options": [
+        "6%",
+        "7%",
+        "8%",
+        "9%"
+      ],
+      "correct_answer": "9%",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_kiss_god_aphrodite",
+        "source_document_name": "Kiss",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:28.959922",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage scaling of Aphrodite's Back Off! ability at level 5?",
+      "options": [
+        "80%",
+        "90%",
+        "75%",
+        "85%"
+      ],
+      "correct_answer": "85%",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Gaming - Smite Abilities",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_back_off!_god_aphrodite",
+        "source_document_name": "Back Off!",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:32.020295",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the intelligence heal per tick of Aphrodite's Love Birds ability at its highest level?",
+      "options": [
+        "14",
+        "16",
+        "18",
+        "20"
+      ],
+      "correct_answer": "16",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_love_birds_god_aphrodite",
+        "source_document_name": "Love Birds",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:34.976969",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown of Aphrodite's Undying Love ultimate ability at level 1?",
+      "options": [
+        "90 seconds",
+        "120 seconds",
+        "85 seconds",
+        "95 seconds"
+      ],
+      "correct_answer": "90 seconds",
+      "correct_letter": "A",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_undying_love_god_aphrodite",
+        "source_document_name": "Undying Love",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:39:37.645872",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}

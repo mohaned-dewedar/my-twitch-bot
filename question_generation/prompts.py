@@ -95,11 +95,16 @@ class SmitePrompts:
     # Question type specific instructions
     QUESTION_TYPE_INSTRUCTIONS = {
         "multiple_choice": """
-        Format: Multiple choice with 4 options (A, B, C, D).
+        Format: Multiple choice with 4 options.
         - One correct answer, three plausible incorrect answers
         - Make incorrect options challenging but clearly wrong to experts
         - Include numerical distractors that are close but not exact
-        - Format as JSON: {"question": "...", "options": ["A", "B", "C", "D"], "correct_answer": "B", "type": "multiple_choice"}
+        - Format as JSON: {"question": "...", "options": ["Option 1", "Option 2", "Option 3", "Option 4"], "correct_answer": "Option 2", "correct_letter": "B", "type": "multiple_choice"}
+        - IMPORTANT: 
+          * correct_answer must be the exact text of one of the options
+          * correct_letter must be the corresponding letter (A, B, C, D) for the correct option
+          * If correct_answer is options[0], then correct_letter should be "A"
+          * If correct_answer is options[1], then correct_letter should be "B", etc.
         """,
         
         "true_false": """
@@ -182,6 +187,14 @@ class SmitePrompts:
         - No additional text or explanation
         - Ensure all JSON is properly formatted and escaped
         - Double-check numerical accuracy against the source content
+        - If the content lacks interesting trivia potential, return empty array: []
+        
+        TRIVIA SUITABILITY GUIDELINES:
+        - Skip if content is too vague or lacks specific details
+        - Skip if content is purely technical implementation details
+        - Skip if content contains no memorable facts or numbers
+        - Skip if content is redundant with common knowledge
+        - Prioritize unique, specific, and interesting information
         """)
         
         final_prompt = "\n\n".join(prompt_parts)

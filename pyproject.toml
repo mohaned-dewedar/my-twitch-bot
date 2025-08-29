@@ -14,6 +14,7 @@ dependencies = [
     "asyncpg",
     "aiohttp",
     "sqlalchemy",
+    "pydantic>=2.11.7",
 ]
 
 [project.optional-dependencies]

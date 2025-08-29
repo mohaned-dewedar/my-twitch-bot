@@ -7,9 +7,10 @@ and generates trivia questions using type-specific prompts.
 
 import json
 import os
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from .base_generator import BaseQuestionGenerator
 from .prompts import SmitePrompts
+from .models import MultipleChoiceQuestion, TrueFalseQuestion, OpenEndedQuestion
 
 
 class SmiteQuestionGenerator(BaseQuestionGenerator):
@@ -20,12 +21,13 @@ class SmiteQuestionGenerator(BaseQuestionGenerator):
     and generates contextual trivia questions using specialized prompts.
     """
     
-    def __init__(self, data_file_path: str = None):
+    def __init__(self, data_file_path: str = None, llm_client = None):
         """
         Initialize Smite question generator.
         
         Args:
             data_file_path: Path to Smite all_documents.json file
+            llm_client: LLM client for question generation (optional)
         """
         super().__init__("smite")
         
@@ -36,6 +38,7 @@ class SmiteQuestionGenerator(BaseQuestionGenerator):
             
         self.data_file_path = data_file_path
         self.documents_by_type = {}
+        self.llm_client = llm_client
         
     def load_data(self) -> bool:
         """
@@ -264,11 +267,43 @@ class SmiteQuestionGenerator(BaseQuestionGenerator):
         
         # Fill in the content from the document
         prompt = prompt_template.replace("{content}", document.get('content', ''))
-        # Store prompt for future LLM integration
-        _ = prompt  # Placeholder for LLM call
         
-        # TODO: Replace with actual LLM call
-        # For now, return placeholder questions
+        # Use LLM client if available, otherwise return placeholder questions
+        if self.llm_client:
+            try:
+                # Choose appropriate Pydantic model based on question type
+                if question_type == "multiple_choice":
+                    model_class = MultipleChoiceQuestion
+                elif question_type == "true_false":
+                    model_class = TrueFalseQuestion
+                elif question_type == "open_ended":
+                    model_class = OpenEndedQuestion
+                else:
+                    raise ValueError(f"Unsupported question type: {question_type}")
+                
+                # Generate structured questions using LLM with Pydantic validation
+                # Allow empty responses for documents that aren't suitable for trivia
+                pydantic_questions = self.llm_client.generate_structured_list(prompt, model_class, allow_empty=True)
+                
+                # Handle empty response (LLM decided document isn't suitable for trivia)
+                if not pydantic_questions:
+                    print(f"📝 LLM skipped {document.get('name', 'Unknown')} (not suitable for trivia)")
+                    return []
+                
+                # Convert Pydantic models to dictionaries for compatibility
+                questions = []
+                for pq in pydantic_questions:
+                    question_dict = pq.model_dump()  # Updated from dict() for Pydantic v2
+                    questions.append(question_dict)
+                
+                print(f"✅ Generated {len(questions)} valid questions for {document.get('name', 'Unknown')}")
+                return questions[:count]  # Limit to requested count
+                
+            except Exception as e:
+                print(f"Error generating questions with LLM for {document.get('name', 'Unknown')}: {e}")
+                print("Falling back to placeholder questions...")
+        
+        # Fallback to placeholder questions if no LLM client or LLM fails
         questions = []
         for _ in range(count):
             placeholder = self._create_placeholder_question(document, question_type)

@@ -1,0 +1,175 @@
+{
+  "bank_name": "smite_ability_generated_20250829_053859_batch4",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the mana cost of Anhur's Enfeeble ability in Smite?",
+      "options": [
+        "50",
+        "60",
+        "70",
+        "80"
+      ],
+      "correct_answer": "60",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_enfeeble_god_anhur",
+        "source_document_name": "Enfeeble",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:23.473553",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "Which of the following is NOT a damage scaling value for Anhur's Impale in Smite?",
+      "options": [
+        "90%",
+        "85%",
+        "100%",
+        "95%"
+      ],
+      "correct_answer": "100%",
+      "correct_letter": "C",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_impale_god_anhur",
+        "source_document_name": "Impale",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:32.967168",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown of Anhur's Disperse ability at level 15?",
+      "options": [
+        "12 seconds",
+        "13.5 seconds",
+        "14 seconds",
+        "15 seconds"
+      ],
+      "correct_answer": "13.5 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_disperse_god_anhur",
+        "source_document_name": "Disperse",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:35.665951",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the final damage scaling percentage of Anhur's Desert Fury ultimate ability?",
+      "options": [
+        "100%",
+        "115%",
+        "125%",
+        "130%"
+      ],
+      "correct_answer": "115%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_desert_fury_god_anhur",
+        "source_document_name": "Desert Fury",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:38.724443",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the basic attack power range of Anubis in Smite?",
+      "options": [
+        "8.7 meters",
+        "8.8 meters",
+        "9.0 meters",
+        "9.2 meters"
+      ],
+      "correct_answer": "8.8 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "easy",
+      "metadata": {
+        "source_document_id": "ability_anubis_basic_attack_god_anubis",
+        "source_document_name": "Anubis Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:45.212683",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What percentage of Lifesteal does Anubis' passive ability, The Scales, grant per level?",
+      "options": [
+        "1%",
+        "2%",
+        "3%",
+        "4%"
+      ],
+      "correct_answer": "2%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Smite Abilities",
+      "difficulty": "easy",
+      "metadata": {
+        "source_document_id": "ability_the_scales_god_anubis",
+        "source_document_name": "The Scales",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:48.219868",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the damage scaling per tick of Anubis' Plague of Locusts ability at its highest level?",
+      "options": [
+        "17%",
+        "20%",
+        "23%",
+        "25%"
+      ],
+      "correct_answer": "20%",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_plague_of_locusts_god_anubis",
+        "source_document_name": "Plague of Locusts",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:51.273813",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "Which god in Smite owns the Mummify ability that scales damage by 55%?",
+      "options": [
+        "Anhur",
+        "Anubis",
+        "Apollo",
+        "Ares"
+      ],
+      "correct_answer": "Anubis",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_mummify_god_anubis",
+        "source_document_name": "Mummify",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:38:59.972305",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}

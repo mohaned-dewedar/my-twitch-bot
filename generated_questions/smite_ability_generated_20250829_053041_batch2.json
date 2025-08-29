@@ -1,0 +1,154 @@
+{
+  "bank_name": "smite_ability_generated_20250829_053041_batch2",
+  "source_type": "smite_auto_generated",
+  "description": "Auto-generated multiple_choice questions from Smite ability data using granite3.2:8b LLM",
+  "questions": [
+    {
+      "question": "What is the cooldown duration of Agni's Noxious Fumes ability in Smite?",
+      "options": [
+        "12 seconds",
+        "13 seconds",
+        "14 seconds",
+        "15 seconds"
+      ],
+      "correct_answer": "13 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_noxious_fumes_god_agni",
+        "source_document_name": "Noxious Fumes",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:30:10.420415",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown of Agni's Path of Flames ability in Smite?",
+      "options": [
+        "14 seconds",
+        "16 seconds",
+        "18 seconds",
+        "20 seconds"
+      ],
+      "correct_answer": "16 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_path_of_flames_god_agni",
+        "source_document_name": "Path of Flames",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:30:20.197625",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is Aladdin's Basic Attack power in Smite?",
+      "options": [
+        "1.8 meters",
+        "1.92 meters",
+        "2.04 meters",
+        "2.16 meters"
+      ],
+      "correct_answer": "1.92 meters",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_aladdin_basic_attack_god_aladdin",
+        "source_document_name": "Aladdin Basic Attack",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:30:29.383983",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the mana cost of Aladdin's Three Wishes passive ability in Smite?",
+      "options": [
+        "50",
+        "60",
+        "70",
+        "80"
+      ],
+      "correct_answer": "60",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_three_wishes_god_aladdin",
+        "source_document_name": "Three Wishes",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:30:32.418521",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the maximum range of Aladdin's Kufic Invocation in Smite?",
+      "options": [
+        "8.4 meters",
+        "9.6 meters",
+        "10.8 meters",
+        "12 meters"
+      ],
+      "correct_answer": "12 meters",
+      "correct_letter": "D",
+      "type": "multiple_choice",
+      "category": "Entertainment",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_kufic_invocation_god_aladdin",
+        "source_document_name": "Kufic Invocation",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:30:35.350825",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the maximum Intelligence Punch Damage of Aladdin's Sultan's Grace at level 5?",
+      "options": [
+        "40",
+        "60",
+        "80",
+        "50"
+      ],
+      "correct_answer": "60",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_sultan's_grace_god_aladdin",
+        "source_document_name": "Sultan's Grace",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:30:38.498346",
+        "generator_version": "1.0.0"
+      }
+    },
+    {
+      "question": "What is the cooldown of Aladdin's Agile Run ability in Smite?",
+      "options": [
+        "14 seconds",
+        "16 seconds",
+        "18 seconds",
+        "20 seconds"
+      ],
+      "correct_answer": "16 seconds",
+      "correct_letter": "B",
+      "type": "multiple_choice",
+      "category": "Gaming",
+      "difficulty": "medium",
+      "metadata": {
+        "source_document_id": "ability_agile_run_god_aladdin",
+        "source_document_name": "Agile Run",
+        "source_document_type": "ability",
+        "generated_at": "2025-08-29T05:30:41.634197",
+        "generator_version": "1.0.0"
+      }
+    }
+  ]
+}

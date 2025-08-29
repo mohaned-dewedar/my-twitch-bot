@@ -162,5 +162,23 @@ class BaseQuestionGenerator(ABC):
                 return False
             if question["correct_answer"] not in question["options"]:
                 return False
+            
+            # Validate correct_letter if present
+            if "correct_letter" in question:
+                correct_letter = question["correct_letter"]
+                if not correct_letter or len(correct_letter) != 1 or not correct_letter.isupper():
+                    return False
+                
+                # Check that correct_letter points to the right option
+                try:
+                    letter_index = ord(correct_letter) - ord('A')
+                    if letter_index < 0 or letter_index >= len(question["options"]):
+                        return False
+                    
+                    expected_answer = question["options"][letter_index]
+                    if question["correct_answer"] != expected_answer:
+                        return False
+                except:
+                    return False
                 
         return True
