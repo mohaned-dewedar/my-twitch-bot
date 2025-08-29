@@ -175,8 +175,8 @@ class TriviaOrchestrator:
                 await self._send_message(response)
                 
             elif pending_type == "smite_single" and self.smite_handler:
-                response = await self.smite_handler.start()
-                self._set_active_handler(manager, self.smite_handler)
+                response = await self.smite_handler.start(force=True)
+                self._set_active_handler(manager, self.smite_handler, force=True)
                 await self._send_message(response)
                 
             elif pending_type == "general" and self.general_handler:
@@ -185,8 +185,8 @@ class TriviaOrchestrator:
                 await self._send_message(response)
                 
             elif pending_type == "general_single" and self.general_handler:
-                response = await self.general_handler.start()
-                self._set_active_handler(manager, self.general_handler)
+                response = await self.general_handler.start(force=True)
+                self._set_active_handler(manager, self.general_handler, force=True)
                 await self._send_message(response)
                 
         except Exception as e:
