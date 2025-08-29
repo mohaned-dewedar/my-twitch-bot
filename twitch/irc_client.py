@@ -31,6 +31,11 @@ from db.users import get_or_create_user
 from db.channels import get_channel_id, add_channel
 from db.sessions import start_session, get_active_session
 
+# Leaderboard commands
+from leaderboard_commands import (
+    cmd_leaderboard, cmd_stats, cmd_rank, cmd_streaks, cmd_channel_summary
+)
+
 
 LOG = logging.getLogger(__name__)
 logging.basicConfig(
@@ -124,6 +129,11 @@ class IRCClient:
             "!trivia auto": self._cmd_trivia_auto,
             "!trivia smite": self._cmd_trivia_smite,
             "!trivia": self._cmd_trivia,
+            # Leaderboard commands
+            "!leaderboard": self._cmd_leaderboard,
+            "!top": self._cmd_leaderboard,  # Alternative alias
+            "!streaks": self._cmd_streaks,
+            "!summary": self._cmd_summary,
         }
         self.command_router.register_commands_batch(exact_commands)
         
@@ -131,6 +141,9 @@ class IRCClient:
         self.command_router.register_prefix_command("!answer", self._cmd_answer)
         self.command_router.register_prefix_command("!ask", self.chat_api.handle_ask_command)
         self.command_router.register_prefix_command("!chat", self.chat_api.handle_chat_command)
+        # Leaderboard prefix commands (support optional usernames)
+        self.command_router.register_prefix_command("!stats", self._cmd_stats)
+        self.command_router.register_prefix_command("!rank", self._cmd_rank)
     
     async def run(self) -> None:
         """
@@ -325,6 +338,57 @@ class IRCClient:
     def _cmd_trivia(self, _: str, __: str) -> str:
         """Handle !trivia command."""
         return self.trivia_orchestrator.start_single_trivia("general")
+    
+    # ======================== LEADERBOARD COMMANDS ========================
+    
+    async def _cmd_leaderboard(self, _: str, __: str) -> str:
+        """Handle !leaderboard command."""
+        try:
+            return await cmd_leaderboard(self.settings.channel, limit=5)
+        except Exception as e:
+            return f"❌ Error getting leaderboard: {str(e)}"
+    
+    async def _cmd_stats(self, message: str, username: str) -> str:
+        """Handle !stats command with optional username."""
+        try:
+            # Check if a specific username was provided
+            parts = message.split()
+            if len(parts) > 1:
+                target_username = parts[1].strip()
+            else:
+                target_username = username  # Default to the person asking
+            
+            return await cmd_stats(target_username, self.settings.channel)
+        except Exception as e:
+            return f"❌ Error getting stats: {str(e)}"
+    
+    async def _cmd_rank(self, message: str, username: str) -> str:
+        """Handle !rank command with optional username."""
+        try:
+            # Check if a specific username was provided
+            parts = message.split()
+            if len(parts) > 1:
+                target_username = parts[1].strip()
+            else:
+                target_username = username  # Default to the person asking
+            
+            return await cmd_rank(target_username, self.settings.channel)
+        except Exception as e:
+            return f"❌ Error getting rank: {str(e)}"
+    
+    async def _cmd_streaks(self, _: str, __: str) -> str:
+        """Handle !streaks command."""
+        try:
+            return await cmd_streaks(self.settings.channel, limit=5)
+        except Exception as e:
+            return f"❌ Error getting streaks: {str(e)}"
+    
+    async def _cmd_summary(self, _: str, __: str) -> str:
+        """Handle !summary command."""
+        try:
+            return await cmd_channel_summary(self.settings.channel)
+        except Exception as e:
+            return f"❌ Error getting summary: {str(e)}"
     
     # ======================== STATUS & DEBUGGING ========================
     
