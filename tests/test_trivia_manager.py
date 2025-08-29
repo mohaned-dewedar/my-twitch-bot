@@ -32,16 +32,28 @@ class TestTriviaManager(unittest.TestCase):
 
     def test_submit_answer_when_active(self):
         self.mock_handler.is_active.return_value = True
-        self.mock_handler.check_answer.return_value = "✅ Correct!"
+        self.mock_handler.check_answer.return_value = (True, "✅ Correct!")
 
         self.manager.active_handler = self.mock_handler
         result = self.manager.submit_answer("Paris", username="Alice")
         self.assertEqual(result, "✅ Correct!")
+        self.assertTrue(self.manager._last_answer_correct)
         self.mock_handler.check_answer.assert_called_with("Paris", "Alice")
 
     def test_submit_answer_when_inactive(self):
         result = self.manager.submit_answer("Zeus", username="Bob")
         self.assertEqual(result, "❌ No active trivia to answer.")
+
+    def test_submit_wrong_answer_when_active(self):
+        self.mock_handler.is_active.return_value = True
+        self.mock_handler.check_answer.return_value = (False, "❌ @Bob - That's not correct. Try again!")
+
+        self.manager.active_handler = self.mock_handler
+        result = self.manager.submit_answer("Wrong", username="Bob")
+        self.assertEqual(result, "❌ @Bob - That's not correct. Try again!")
+        self.assertFalse(self.manager._last_answer_correct)
+        self.assertFalse(self.manager.should_ask_next())
+        self.mock_handler.check_answer.assert_called_with("Wrong", "Bob")
 
     def test_end_trivia_when_active(self):
         self.mock_handler.is_active.return_value = True

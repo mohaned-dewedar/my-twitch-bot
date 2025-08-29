@@ -5,7 +5,7 @@ These handlers fetch questions from the PostgreSQL database.
 
 import random
 import json
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Tuple
 from trivia.base import TriviaBase
 from db.database import Database
 
@@ -156,9 +156,9 @@ class GeneralTriviaHandler(DatabaseTriviaHandler):
         else:
             return f"📚 {self._current_question['question']}"
     
-    def check_answer(self, answer: str, username: Optional[str] = None) -> str:
+    def check_answer(self, answer: str, username: Optional[str] = None) -> Tuple[bool, str]:
         if not self._active or not self._current_question:
-            return "❌ No active trivia."
+            return (False, "❌ No active trivia.")
         
         user_prefix = f"@{username}" if username else "You"
         qtype = self._current_question['question_type']
@@ -176,9 +176,9 @@ class GeneralTriviaHandler(DatabaseTriviaHandler):
         
         if is_correct:
             self._active = False
-            return f"🎉 {user_prefix} got it correct! {correct_answer} is the right answer!"
+            return (True, f"🎉 {user_prefix} got it correct! {correct_answer} is the right answer!")
         else:
-            return f"❌ {user_prefix} - That's not correct. Try again!"
+            return (False, f"❌ {user_prefix} - That's not correct. Try again!")
     
     def end(self) -> str:
         if not self._current_question:
@@ -197,38 +197,86 @@ class GeneralTriviaHandler(DatabaseTriviaHandler):
 
 
 class SmiteTriviaHandler(DatabaseTriviaHandler):
-    """Handler for Smite god ability questions"""
+    """Handler for Smite god ability questions (both old format and auto-generated MCQ)"""
     
     async def start(self, force: bool = False) -> str:
         if self._active and not force:
             return f"⚠️ Trivia already active: {self._current_question['question'] if self._current_question else 'unknown question'}"
         
-        # Fetch random Smite question
-        self._current_question = await self._fetch_random_question({
-            'category': 'Smite'
-        })
+        # Fetch random Smite question (includes both old Smite category and new smite_ability subcategory)
+        async with self.db.acquire() as conn:
+            query = """
+                SELECT q.*, qb.name as bank_name, qb.source_type
+                FROM questions q 
+                JOIN question_banks qb ON q.bank_id = qb.id
+                WHERE q.category = $1 OR q.subcategory = $2
+                ORDER BY RANDOM() 
+                LIMIT 1
+            """
+            
+            row = await conn.fetchrow(query, 'Smite', 'smite_ability')
+            if not row:
+                return "❌ No Smite questions available. Try loading questions first."
+                
+            # Convert database row to question dict
+            self._current_question = {
+                'id': row['id'],
+                'question': row['question'],
+                'question_type': row['question_type'],
+                'correct_answer': row['correct_answer'],
+                'answer_options': json.loads(row['answer_options']) if row['answer_options'] else None,
+                'category': row['category'],
+                'subcategory': row['subcategory'],
+                'difficulty': row['difficulty'],
+                'bank_name': row['bank_name'],
+                'source_type': row['source_type']
+            }
         
         if not self._current_question:
             return "❌ No Smite questions available. Try loading questions first."
         
         self._active = True
-        return f"🎯 SMITE TRIVIA! {self._current_question['question']} Type !answer GodName to answer!"
+        
+        # Format question based on type
+        if self._current_question['question_type'] == 'multiple_choice':
+            # Use custom formatting for Smite MCQ questions to maintain consistency
+            if not self._current_question.get('answer_options'):
+                return f"🎯 SMITE TRIVIA! {self._current_question['question']}"
+                
+            options = self._current_question['answer_options']
+            emojis = ['🇦', '🇧', '🇨', '🇩']
+            
+            formatted = f"🎯 SMITE TRIVIA! {self._current_question['question']}\n"
+            for i, option in enumerate(options[:4]):  # Max 4 options
+                formatted += f"{emojis[i]} {option} "
+            
+            return formatted.strip()
+        else:
+            # Legacy open-ended format (god ability questions)
+            return f"🎯 SMITE TRIVIA! {self._current_question['question']} Type !answer GodName to answer!"
     
-    def check_answer(self, answer: str, username: Optional[str] = None) -> str:
+    def check_answer(self, answer: str, username: Optional[str] = None) -> Tuple[bool, str]:
         if not self._active or not self._current_question:
-            return "❌ No active trivia."
+            return (False, "❌ No active trivia.")
         
         user_prefix = f"@{username}" if username else "You"
         correct_answer = self._current_question['correct_answer']
+        qtype = self._current_question['question_type']
         
-        # Smite god names are case-insensitive
-        is_correct = answer.strip().lower() == correct_answer.strip().lower()
+        is_correct = False
+        
+        if qtype == 'multiple_choice':
+            # Use the MCQ checking logic from base class
+            is_correct = self._check_mcq_answer(answer, self._current_question)
+        else:
+            # Legacy open-ended format - Smite god names are case-insensitive
+            is_correct = answer.strip().lower() == correct_answer.strip().lower()
         
         if is_correct:
             self._active = False
-            return f"🎉 {user_prefix} got it correct! {correct_answer} is the right answer!"
+            return (True, f"🎉 {user_prefix} got it correct! {correct_answer} is the right answer!")
         else:
-            return f"❌ {user_prefix} - That's not correct. Try again!"
+            return (False, f"❌ {user_prefix} - That's not correct. Try again!")
     
     def end(self) -> str:
         if not self._current_question:
@@ -241,8 +289,8 @@ class SmiteTriviaHandler(DatabaseTriviaHandler):
     
     def get_help(self) -> str:
         return """🎯 SMITE TRIVIA COMMANDS:
-• !trivia smite - Start Smite god ability questions
-• !answer GodName - Submit your answer
+• !trivia smite - Start Smite questions (god abilities + auto-generated MCQ)
+• !answer <your answer> - Submit answers (supports a/b/c/d for MCQ, or GodName for legacy)
 • !giveup - End current question and show answer"""
 
 
