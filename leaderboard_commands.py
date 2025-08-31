@@ -11,7 +11,7 @@ from typing import Optional, Union, List, Dict, Any
 from db.database import Database
 from db.channels import get_channel_id, add_channel
 from db.users import get_or_create_user
-from db.leaderboard import get_leaderboard, get_user_stats
+from db.leaderboard import get_leaderboard, get_user_stats, reset_leaderboard
 from db.channel_users import get_channel_user_rank, get_top_streaks, get_channel_stats_summary
 
 

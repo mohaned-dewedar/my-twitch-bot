@@ -54,3 +54,27 @@ async def get_user_stats(channel_id: int, user_id: int):
             WHERE cu.channel_id = $1 AND cu.user_id = $2
         """, channel_id, user_id)
         return result
+
+async def reset_leaderboard(channel_id: int):
+    """Reset all leaderboard data for a specific channel"""
+    pool = await Database.get_pool()
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            # Reset channel_users table
+            await conn.execute("""
+                UPDATE channel_users 
+                SET correct_answers = 0, 
+                    total_questions = 0, 
+                    current_streak = 0, 
+                    best_streak = 0,
+                    last_seen = NOW()
+                WHERE channel_id = $1
+            """, channel_id)
+            
+            # Delete all attempts for this channel
+            await conn.execute("""
+                DELETE FROM attempts 
+                WHERE channel_id = $1
+            """, channel_id)
+            
+            return True
