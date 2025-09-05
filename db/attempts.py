@@ -1,24 +1,25 @@
 from db.database import Database
-from db.channel_users import update_user_stats
 
 async def create_attempt(session_id: int, question_id: int, user_id: int, 
                         channel_id: int, user_answer: str, is_correct: bool) -> int:
-    """Create a new attempt record and update user stats"""
+    """
+    Create a new attempt record.
+    
+    Note: User stats are automatically updated via database trigger 
+    'trigger_update_channel_user_stats' that fires after INSERT on attempts table.
+    This prevents double-counting that was happening when both manual update_user_stats()
+    and the database trigger were running.
+    """
     pool = await Database.get_pool()
     async with pool.acquire() as conn:
-        # Create the attempt record
+        # Create the attempt record - stats will be updated automatically by trigger
         result = await conn.fetchrow("""
             INSERT INTO attempts (session_id, question_id, user_id, channel_id, user_answer, is_correct)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id
         """, session_id, question_id, user_id, channel_id, user_answer, is_correct)
         
-        attempt_id = result['id']
-        
-        # Update user statistics in channel_users table
-        await update_user_stats(channel_id, user_id, is_correct)
-        
-        return attempt_id
+        return result['id']
 
 async def get_user_attempts(user_id: int, channel_id: int, limit: int = 20):
     """Get recent attempts for a user in a specific channel"""

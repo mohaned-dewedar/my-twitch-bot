@@ -189,24 +189,49 @@ CREATE TRIGGER trigger_update_question_stats
     FOR EACH ROW
     EXECUTE FUNCTION update_question_stats();
 
--- Function to update user stats
+-- Function to update user stats including streaks
+-- This function runs automatically after each attempt is inserted
+-- It handles: total stats, question-type stats, and streak calculations
 CREATE OR REPLACE FUNCTION update_channel_user_stats()
 RETURNS TRIGGER AS $$
 DECLARE
     q_type VARCHAR(50);
 BEGIN
-    -- Get question type
+    -- Get question type for type-specific stat tracking
     SELECT question_type INTO q_type FROM questions WHERE id = NEW.question_id;
     
-    -- Update or insert channel_users record
-    INSERT INTO channel_users (channel_id, user_id, total_questions, correct_answers, last_seen)
-    VALUES (NEW.channel_id, NEW.user_id, 1, CASE WHEN NEW.is_correct THEN 1 ELSE 0 END, NEW.created_at)
+    -- Update or insert channel_users record with comprehensive stats
+    INSERT INTO channel_users (
+        channel_id, user_id, total_questions, correct_answers, 
+        current_streak, best_streak, last_seen
+    )
+    VALUES (
+        NEW.channel_id, NEW.user_id, 1, 
+        CASE WHEN NEW.is_correct THEN 1 ELSE 0 END,
+        CASE WHEN NEW.is_correct THEN 1 ELSE 0 END,  -- Start streak at 1 if correct, 0 if wrong
+        CASE WHEN NEW.is_correct THEN 1 ELSE 0 END,  -- Set best_streak to current_streak
+        NEW.created_at
+    )
     ON CONFLICT (channel_id, user_id) 
     DO UPDATE SET
+        -- Basic stats
         total_questions = channel_users.total_questions + 1,
         correct_answers = channel_users.correct_answers + CASE WHEN NEW.is_correct THEN 1 ELSE 0 END,
         last_seen = NEW.created_at,
-        -- Update type-specific stats
+        
+        -- Streak logic: if correct, increment; if wrong, reset to 0
+        current_streak = CASE 
+            WHEN NEW.is_correct THEN channel_users.current_streak + 1 
+            ELSE 0 
+        END,
+        
+        -- Best streak: keep the maximum between current best and new current streak
+        best_streak = CASE 
+            WHEN NEW.is_correct THEN GREATEST(channel_users.best_streak, channel_users.current_streak + 1)
+            ELSE channel_users.best_streak 
+        END,
+        
+        -- Question-type specific stats (MCQ, True/False, Open-ended)
         mcq_total = CASE WHEN q_type = 'multiple_choice' THEN channel_users.mcq_total + 1 ELSE channel_users.mcq_total END,
         mcq_correct = CASE WHEN q_type = 'multiple_choice' AND NEW.is_correct THEN channel_users.mcq_correct + 1 ELSE channel_users.mcq_correct END,
         tf_total = CASE WHEN q_type = 'true_false' THEN channel_users.tf_total + 1 ELSE channel_users.tf_total END,
